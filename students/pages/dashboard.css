@@ -1,0 +1,19 @@
+/* Ensure the dashboard container uses flexbox to arrange divs side by side */
+.dashboard {
+    display: flex;
+    justify-content: space-between; /* Distributes space between the divs */
+    width: 100%; /* Full width of the parent container */
+}
+
+/* Style for the dashboard-track div (left side) */
+#dashboard-track {
+    flex: 1; /* Takes up available space */
+    margin-right: 10px; /* Optional spacing between the two divs */
+}
+
+/* Style for the user-workloads div (right side) */
+#user-workloads {
+    flex: 1; /* Takes up available space */
+    margin-left: 10px; /* Optional spacing between the two divs */
+}
+

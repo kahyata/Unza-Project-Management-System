@@ -1,0 +1,207 @@
+.welcome-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 20px;
+}
+
+.greeting h2.dashboard-tx {
+    margin: 0;
+    color: #333;
+    font-size: 2.8em;
+    font-weight: 600;
+}
+
+.greeting p.dash-paragraph {
+    margin: 5px 0 0 0;
+    color: #666;
+    font-size: 1.8em;
+}
+
+.templates a {
+    display: inline-block;
+    padding: 20px 20px;
+    background-color: #F6F5F2;
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+    border-radius: 20px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.templates a:hover {
+    background-color: #3e8e41;
+}
+
+.dashboard {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+}
+
+.dashboard-track {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.top-row {
+    display: flex;
+    gap: 20px;
+}
+
+.objectives {
+    flex: 1;
+}
+
+.tasks {
+    flex: 1;
+}
+
+.leadership {
+    border: 1px solid #e0e0e0;
+    border-radius: 35px;
+    padding: 20px;
+    background-color: #f7f7f7;
+    width: 100%;
+}
+
+.user-workloads {
+    flex: 0 0 350px; 
+    min-width: 250px;
+    max-width: 350px;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 35px;
+    background-color: #f7f7f7;
+}
+
+.user-meetings {
+    display: flex;
+    flex-direction: column;
+    height: 351px;
+}
+
+.meeting-content {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 10px;
+    border: 1px solid #f0f0f0;
+    border-radius: 20px;
+    display: flex;
+    gap: 20px;
+}
+.meeting-content:hover {
+    background-color: #f0f0f0;
+    cursor: pointer;
+}
+
+.times {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.attributes {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.leadership-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.leadership-table th,
+.leadership-table td {
+    padding: 8px 12px;
+    text-align: left;
+}
+
+.leadership-table th {
+    background-color: #f5f5f5;
+    font-weight: 600;
+}
+
+.leadership-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+.student-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.Meeting-platform {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.Meeting-platform svg {
+    flex-shrink: 0;
+}
+
+/* Fixed chart containers */
+.objectives, .tasks {
+    padding: 20px;
+    background: #F7F7F7; 
+    border: 1px solid #e0e0e0; 
+    border-radius: 35px;
+    text-align: center;
+    min-height: 300px; 
+}
+
+.objectives canvas, .tasks canvas {
+    max-height: 250px; /* Increased height */
+    width: 100% !important;
+    height: 250px !important; /* Set explicit height */
+}
+
+.objectives h2.head, .tasks h2.head {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 1.2em;
+    text-align: left;
+}
+.see-all {
+    text-align: start;
+    margin-top: 16px;
+    padding: 10px 24px;
+    background-color: #fff;
+    color: #000000;
+    border: none;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+.see-all:hover,
+.see-all:focus {
+    color: #2563c9;
+    outline: none;
+}
+
+.more_leaders {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 20px;
+    color: #000000;
+    text-decoration: none;
+    border-radius: 20px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}

@@ -1,0 +1,175 @@
+<div class="content-card">
+    <h2>Projects</h2>
+    <button class="new-project-btn">
+        New Project<span class="material-icons">add</span> 
+    </button>
+</div>
+
+<div class="content-card" id="newProjectCard" style="display: none;">
+    <div class="submission">
+        <form id="newProjectForm" class="submission-content">
+            <div class="step-indicators">
+                <div class="step active">1</div>
+                <div class="step">2</div>
+                <div class="step">3</div>
+            </div>
+
+            <!-- Step 1: Participant Details -->
+            <div class="form-section active">
+                <div class="form-header">
+                    <h2>Submit a new project</h2>
+                    <p>Please fill in the correct information required for your project to be successful.</p>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="participantType">Participants</label>
+                        <select id="participantType" name="participantType">
+                            <option value="" disabled selected>Select participant type...</option>
+                            <option value="Individual">Individual</option>
+                            <option value="Group">Group</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" name="firstName">
+                    </div>
+                    <div class="form-group">
+                        <label for="middleName">Middle Name</label>
+                        <input type="text" id="middleName" name="middleName">
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" name="lastName">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="program">Program</label>
+                        <select id="program" name="program">
+                            <option value="" disabled selected>Select program...</option>
+                            <option value="Computer Systems Science">Computer Systems Science</option>
+                            <option value="Computer Network Engineering">Computer Network Engineering</option>
+                            <option value="Computer Software Engineering">Computer Software Engineering</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="computerNumber">Computer Number</label>
+                        <input type="text" id="computerNumber" name="computerNumber">
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-secondary">
+                        <span class="material-icons">cancel</span> Cancel
+                    </button>
+                    <button class="next-button">
+                        Next <span class="material-icons">arrow_forward</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 2: Project Details -->
+            <div class="form-section">
+                <div class="form-header">
+                    <h2>Project Details</h2>
+                </div>
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input type="text" id="title" name="title">
+                </div>
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" name="category">
+                        <option value="" disabled selected>Select category...</option>
+                        <option value="Web development">Web development</option>
+                        <option value="Mobile Application development">Mobile Application development</option>
+                        <option value="Data Science">Data Science</option>
+                        <option value="Artificial Intelligence">Artificial Intelligence</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="projectBrief">Project Brief</label>
+                    <textarea id="projectBrief" name="projectBrief"></textarea>
+                </div>
+                <div class="action-buttons">
+                    <button class="previous-button">
+                        <span class="material-icons">arrow_back</span> Previous
+                    </button>
+                    <button class="next-button">
+                        Next <span class="material-icons">arrow_forward</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 3: Supervisor Selection and Review -->
+            <div class="form-section">
+                <div class="form-header">
+                    <h2>Pick your supervisor</h2>
+                </div>
+                <div class="supervisor-profiles">
+                    <label class="supervisor-profile">
+                        <div class="radio-container">
+                            <input type="radio" name="supervisor" class="supervisor-radio" value="Dr. Nyirenda">
+                        </div>
+                        <div class="profile-content">
+                            <div class="profile-title">Dr. Nyitenda → Expert Software Engineer</div>
+                            <p class="profile-description">Over 10 years in the Software Engineering industry. My experience in Software engineering helps students become the best at what they do.</p>
+                            <div class="profile-category">Category: Software Engineering, Data Science.</div>
+                            <div class="profile-skills">
+                                <span class="skill-tag">Java</span>
+                                <span class="skill-tag">Javascript</span>
+                            </div>
+                        </div>
+                    </label>
+                    <label class="supervisor-profile">
+                        <div class="radio-container">
+                            <input type="radio" name="supervisor" class="supervisor-radio" value="Dr. Jackson Phiri">
+                        </div>
+                        <div class="profile-content">
+                            <div class="profile-title">Dr. Jackson Phiri → Expert Software Engineer</div>
+                            <p class="profile-description">Over 10 years in the Software Engineering industry. My experience in Software engineering helps students become the best at what they do.</p>
+                            <div class="profile-category">Category: Software Engineering, Data Science.</div>
+                            <div class="profile-skills">
+                                <span class="skill-tag">Java</span>
+                                <span class="skill-tag">Javascript</span>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+                <div class="form-header">
+                    <h2>Review Your Submission</h2>
+                </div>
+                <div class="review-section">
+                    <p><strong>Participant Type:</strong> <span id="reviewParticipantType" class="review-value empty">Not specified</span></p>
+                    <p><strong>First Name:</strong> <span id="reviewFirstName" class="review-value empty">Not specified</span></p>
+                    <p><strong>Middle Name:</strong> <span id="reviewMiddleName" class="review-value empty">Not specified</span></p>
+                    <p><strong>Last Name:</strong> <span id="reviewLastName" class="review-value empty">Not specified</span></p>
+                    <p><strong>Email:</strong> <span id="reviewEmail" class="review-value empty">Not specified</span></p>
+                    <p><strong>Program:</strong> <span id="reviewProgram" class="review-value empty">Not specified</span></p>
+                    <p><strong>Computer Number:</strong> <span id="reviewComputerNumber" class="review-value empty">Not specified</span></p>
+                    <p><strong>Title:</strong> <span id="reviewTitle" class="review-value empty">Not specified</span></p>
+                    <p><strong>Category:</strong> <span id="reviewCategory" class="review-value empty">Not specified</span></p>
+                    <p><strong>Project Brief:</strong> <span id="reviewProjectBrief" class="review-value empty">Not specified</span></p>
+                    <p><strong>Supervisor:</strong> <span id="reviewSupervisor" class="review-value empty">Not specified</span></p>
+                </div>
+                <div class="action-buttons">
+                    <button class="previous-button">
+                        <span class="material-icons">arrow_back</span> Previous
+                    </button>
+                    <button class="submit-button">
+                        Submit <span class="material-icons">send</span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="content-card">
+    <div id="projectsList" style="display: none;"></div>
+    <div id="noProjectsMsg" class="no-projects-message">
+        <span class="material-icons">folder_open</span>
+        No projects yet. Create your first project above!
+    </div>
+</div>

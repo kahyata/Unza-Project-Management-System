@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../styles/dashboard.css">
+</head>
+<body>
+    <div class="dashboard">
+    <div class="dash-head">
+        <div class="greetings">
+            <span class="dash-title">Dashboard</span>
+            <span class="dash-grt">Hello John Doe. Welcome</span>
+        </div>
+        <a href="#">Create Meetings</a>
+    </div>
+    <div class="dash-list">
+        <div class="students-total">
+            <div class="student-head">
+                <span class="head-txt">Allocated Students</span>
+                <span class="head-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80ZM380-420q58 0 99-41t41-99q0-58-41-99t-99-41q-58 0-99 41t-41 99q0 58 41 99t99 41Zm280 40q42 0 71-29t29-71q0-42-29-71t-71-29q-42 0-71 29t-29 71q0 42 29 71t71 29ZM480-160q85 0 155-40t113-106q-21-6-43-10t-45-4q-53 0-128 31T412-167q17 4 34 5.5t34 1.5Zm-127-26q35-72 79.5-107t67.5-47q-29-9-58.5-14.5T380-360q-45 0-89 11t-85 31q26 43 63.5 77.5T353-186Z"/></svg>                
+                </span>
+            </div>
+            <span class="student-info" id="allocated-number">12</span>
+        </div>
+        <div class="students-total">
+            <div class="student-head">
+                <span class="head-txt">Accepted Projects</span>
+                <span class="head-lg">
+<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M480-400 40-640l440-240 440 240-440 240Zm0 160L63-467l84-46 333 182 333-182 84 46-417 227Zm0 160L63-307l84-46 333 182 333-182 84 46L480-80Z"/></svg>                </span>
+            </div>
+            <span class="student-info" id="accepted-projects">8</span>
+        </div>
+        <div class="students-total">
+            <div class="student-head">
+                <span class="head-txt">Pending Students</span>
+                <span class="head-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M320-160h320v-120q0-66-47-113t-113-47q-66 0-113 47t-47 113v120ZM160-80v-80h80v-120q0-61 28.5-114.5T348-480q-51-32-79.5-85.5T240-680v-120h-80v-80h640v80h-80v120q0 61-28.5 114.5T612-480q51 32 79.5 85.5T720-280v120h80v80H160Z"/></svg>                
+                </span>
+            </div>
+            <span class="student-info" id="pending-number">2</span>
+        </div>
+        <div class="students-total">
+            <div class="student-head">
+                <span class="head-txt">Completed Projects</span>
+                <span class="head-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M160-80v-80h80v-120q0-61 28.5-114.5T348-480q-51-32-79.5-85.5T240-680v-120h-80v-80h640v80h-80v120q0 61-28.5 114.5T612-480q51 32 79.5 85.5T720-280v120h80v80H160Z"/></svg>                
+                </span>
+            </div>
+            <span class="student-info" id="pending-number">2</span>
+        </div>
+    </div>
+    <div class="dash-projects">
+        <div class="project-attributes">
+            <button onclick="showContainer(1)">Requests</button>
+            <button onclick="showContainer(2)">Submissions</button>
+            <button onclick="showContainer(3)">Projects</button>
+        </div>
+        <div id="requests" class="container">
+            <table>
+                <tr>
+                    <th>
+                        <input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)">
+                    </th>
+                    <th>Name</th>
+                    <th>Program</th>
+                    <th>Project Title</th>
+                    <th>Status</th>
+                    <th>Category</th>
+                    <th></th>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="checkbox" class="rowCheckbox">
+                    </td>
+                    <td>John Mwanza</td>
+                    <td>Computer Systems Engineering</td>
+                    <td>Online Examination System</td>
+                    <td><span class="status pending">Pending</span></td>
+                    <td>Group</td>
+                    <td>
+                        <span class="more-ic"  onclick="showMoreOptions(this)">
+                            <svg viewBox="0 0 24 24" fill="none" height="24px" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <circle cx="18" cy="12" r="1.5" transform="rotate(90 18 12)" fill="#080341"></circle> <circle cx="12" cy="12" r="1.5" transform="rotate(90 12 12)" fill="#080341"></circle> <circle cx="6" cy="12" r="1.5" transform="rotate(90 6 12)" fill="#080341"></circle> </g></svg>                        
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="checkbox" class="rowCheckbox">
+                    </td>
+                    <td>Mary Banda</td>
+                    <td>Information Systems</td>
+                    <td>E-Learning Platform</td>
+                    <td><span class="status approved">Approved</span></td>
+                    <td>Individual</td>
+                    <td>
+                        <span class="more-ic" onclick="showMoreOptions(this)">
+                            <svg viewBox="0 0 24 24" fill="none" height="24px" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <circle cx="18" cy="12" r="1.5" transform="rotate(90 18 12)" fill="#080341"></circle> <circle cx="12" cy="12" r="1.5" transform="rotate(90 12 12)" fill="#080341"></circle> <circle cx="6" cy="12" r="1.5" transform="rotate(90 6 12)" fill="#080341"></circle> </g></svg>                        
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="checkbox" class="rowCheckbox">
+                    </td>
+                    <td>Attress Tembo</td>
+                    <td>Software Engineering</td>
+                    <td>Mobile Health App</td>
+                    <td><span class="status rejected">Rejected</span></td>
+                    <td>Group</td>
+                    <td>
+                        <span class="more-ic" onclick="showMoreOptions(this)">
+                            <svg viewBox="0 0 24 24" fill="none" height="24px" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <circle cx="18" cy="12" r="1.5" transform="rotate(90 18 12)" fill="#080341"></circle> <circle cx="12" cy="12" r="1.5" transform="rotate(90 12 12)" fill="#080341"></circle> <circle cx="6" cy="12" r="1.5" transform="rotate(90 6 12)" fill="#080341"></circle> </g></svg>                        
+                        </span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="submissions" class="container">
+            <div class="no-submissions">
+                <span class="no-sub-txt">No new submissions</span>
+                <span class="no-sub-lg"></span>
+            </div>
+        </div>
+        <div id="meetings" class="container">
+            <div class="no-meetings">
+                <span class="no-meet-txt">No upcoming meetings</span>
+                <span class="no-meet-lg"></span>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Student Details Modal -->
+<div id="student-modal" style="display:none;">
+    <div class="student-modal-content">
+        <button class="student-modal-close" id="student-modal-close">&times;</button>
+        <div id="student-modal-body">
+            <!-- Your custom HTML template will be injected here -->
+        </div>
+    </div>
+</div>
+<script src="../js/dashboard.js"></script>
+</body>
+</html>

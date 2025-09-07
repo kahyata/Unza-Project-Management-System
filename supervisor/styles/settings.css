@@ -1,0 +1,115 @@
+.notifications {
+}
+
+.notifications-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    gap: 21px;
+}
+
+.notifications h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 18px;
+    color: #222;
+}
+
+button.read {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 22px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 18px;
+    transition: background 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+button.read:hover {
+    background: #0056b3;
+}
+
+.current-time {
+    margin-top: 10px;
+}
+
+.current-time .head {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.current-notifications {
+    display: flex;
+    align-items: flex-start;
+    background: #f7fafd;
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+    position: relative;
+}
+
+.current-notifications.read {
+    opacity: 0.6;
+}
+
+.avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #007bff 60%, #6ec6ff 100%);
+    margin-right: 16px;
+    flex-shrink: 0;
+}
+
+.not-details {
+    flex: 1;
+}
+
+.not-details .name {
+    font-weight: 700;
+    color: #007bff;
+}
+
+.not-details p {
+    margin: 0 0 4px 0;
+    font-size: 1.05rem;
+    color: #222;
+}
+
+.not-details .time {
+    font-size: 0.97rem;
+    color: #888;
+}
+
+.more {
+    margin-left: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    border-radius: 50%;
+    padding: 4px;
+    transition: background 0.2s;
+}
+.more:hover {
+    background: #e0e7ef;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .notifications {
+        padding: 18px 6vw 14px 6vw;
+        max-width: 98vw;
+    }
+    .current-notifications {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 12px 8px;
+    }
+}
