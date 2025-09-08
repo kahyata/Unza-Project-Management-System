@@ -281,10 +281,14 @@ function initializePageFunctionality(page) {
         console.log('Initializing projects.html');
     } else if (page === 'dashboard.html') {
         console.log('Initializing dashboard.html');
+    } else if (page === 'notifications.html') {
+        if (window.initNotificationsPage) {
+            window.initNotificationsPage();
+        }
     }
 }
 
-// SPA navigation for sidebar menu
+// SPA navigation for sidebar menu with state persistence and history
 document.querySelectorAll('.menu-item').forEach(link => {
     link.addEventListener('click', function(e) {
         e.preventDefault();
@@ -292,33 +296,59 @@ document.querySelectorAll('.menu-item').forEach(link => {
         this.classList.add('active');
         const page = this.getAttribute('data-page');
         if (page) {
-            fetch('pages/' + page)
-                .then(res => res.text())
-                .then(html => {
-                    document.querySelector('.main-content').innerHTML = html;
-                    initializePageFunctionality(page);
-                })
-                .catch(error => {
-                    console.error('Error loading page:', error);
-                    document.querySelector('.main-content').innerHTML = '<div class="content-card"><h2>Error</h2><p>Failed to load page content.</p></div>';
-                });
+            loadPage(page, true);
         }
     });
 });
 
-// Load default page
-window.addEventListener('DOMContentLoaded', function() {
-    const active = document.querySelector('.menu-item.active');
-    if (active && active.getAttribute('data-page')) {
-        const page = active.getAttribute('data-page');
-        fetch('pages/' + page)
-            .then(res => res.text())
-            .then(html => {
-                document.querySelector('.main-content').innerHTML = html;
-                initializePageFunctionality(page);
-            })
-            .catch(error => {
-                console.error('Error loading page:', error);
+function loadPage(page, pushState = false) {
+    fetch('pages/' + page)
+        .then(res => res.text())
+        .then(html => {
+            document.querySelector('.main-content').innerHTML = html;
+            initializePageFunctionality(page);
+            // Save last visited page
+            localStorage.setItem('lastVisitedPage', page);
+            // Update active menu item
+            document.querySelectorAll('.menu-item').forEach(l => {
+                l.classList.toggle('active', l.getAttribute('data-page') === page);
             });
+            // Push state to history if needed
+            if (pushState) {
+                history.pushState({ page: page }, '', '#' + page.replace('.html', ''));
+            }
+        })
+        .catch(error => {
+            console.error('Error loading page:', error);
+            document.querySelector('.main-content').innerHTML = '<div class="content-card"><h2>Error</h2><p>Failed to load page content.</p></div>';
+        });
+}
+
+// Handle browser back/forward navigation
+window.addEventListener('popstate', function(event) {
+    let page = 'dashboard.html';
+    if (event.state && event.state.page) {
+        page = event.state.page;
+    } else if (location.hash) {
+        page = location.hash.replace('#', '') + '.html';
     }
+    loadPage(page, false);
+});
+
+// Load default or last visited page
+window.addEventListener('DOMContentLoaded', function() {
+    let page = 'dashboard.html';
+    // Check for hash in URL (for direct navigation)
+    if (location.hash) {
+        page = location.hash.replace('#', '') + '.html';
+    } else {
+        // Check localStorage for last visited page
+        const last = localStorage.getItem('lastVisitedPage');
+        if (last) page = last;
+    }
+    // Set active menu item
+    document.querySelectorAll('.menu-item').forEach(l => {
+        l.classList.toggle('active', l.getAttribute('data-page') === page);
+    });
+    loadPage(page, true);
 });

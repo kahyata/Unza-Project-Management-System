@@ -1,8 +1,86 @@
-// Toggle between Requests, Submissions, Meetings
+// Generic popup modal functions
+function showCustomPopup(html) {
+    const modal = document.getElementById('custom-popup-modal');
+    const body = document.getElementById('custom-popup-body');
+    if (modal && body) {
+        body.innerHTML = html;
+        modal.classList.add('active');
+    }
+}
+
+function closeCustomPopup() {
+    const modal = document.getElementById('custom-popup-modal');
+    if (modal) modal.classList.remove('active');
+}
+// Accept all selected requests
+function acceptAllSelected() {
+    const table = document.querySelector('#requests table');
+    if (!table) return;
+    const checkboxes = table.querySelectorAll('.rowCheckbox:checked');
+    checkboxes.forEach(cb => {
+        const row = cb.closest('tr');
+        if (row) {
+            const statusElement = row.querySelector('.status');
+            if (statusElement) {
+                statusElement.textContent = 'Approved';
+                statusElement.className = 'status approved';
+            }
+        }
+    });
+    closeBulkActionModal();
+}
+
+// Decline all selected requests
+function declineAllSelected() {
+    const table = document.querySelector('#requests table');
+    if (!table) return;
+    const checkboxes = table.querySelectorAll('.rowCheckbox:checked');
+    checkboxes.forEach(cb => {
+        const row = cb.closest('tr');
+        if (row && row.parentNode) {
+            row.parentNode.removeChild(row);
+        }
+    });
+    closeBulkActionModal();
+}
+
+function closeBulkActionModal() {
+    document.getElementById('bulk-action-modal').classList.remove('active');
+    // Uncheck selectAll if modal is closed without action
+    const selectAll = document.getElementById('selectAll');
+    if (selectAll) selectAll.checked = false;
+}
+
+// Show modal when selectAll is checked
+document.addEventListener('DOMContentLoaded', function() {
+    const selectAll = document.getElementById('selectAll');
+    if (selectAll) {
+        selectAll.addEventListener('change', function() {
+            if (this.checked) {
+                document.getElementById('bulk-action-modal').classList.add('active');
+            } else {
+                document.getElementById('bulk-action-modal').classList.remove('active');
+            }
+        });
+    }
+});
+// dashboard.js
+// Toggle between Requests, Submissions, Projects, Groups
 function showContainer(index) {
-    document.getElementById('requests').style.display = (index === 1) ? 'block' : 'none';
-    document.getElementById('submissions').style.display = (index === 2) ? 'block' : 'none';
-    document.getElementById('meetings').style.display = (index === 3) ? 'block' : 'none';
+    const containers = [
+        document.getElementById('requests'),
+        document.getElementById('submissions'),
+        document.getElementById('meetings'),
+        document.querySelector('.teams')
+    ];
+    containers.forEach((c, i) => {
+        if (c) c.classList.toggle('active', i === index - 1);
+    });
+    // Toggle active button
+    const btns = document.querySelectorAll('.project-attributes button');
+    btns.forEach((btn, i) => {
+        btn.classList.toggle('active', i === index - 1);
+    });
 }
 
 // Select/Deselect all checkboxes
@@ -43,33 +121,95 @@ function showMoreOptions(element) {
     // Handle menu actions
     const [view, accept, decline] = menu.querySelectorAll('.more-option-item');
     view.onclick = function() {
-        alert('Show student details here (modal or page).');
+        // Find the row and extract student info
+        const row = element.closest('tr');
+        if (row) {
+            const tds = row.querySelectorAll('td');
+            const student = {
+                name: tds[1]?.textContent || '',
+                program: tds[2]?.textContent || '',
+                project: tds[3]?.textContent || '',
+                status: tds[4]?.textContent || '',
+                category: tds[5]?.textContent || ''
+            };
+            showStudentModal(student);
+        }
         menu.remove();
     };
     accept.onclick = function() {
         // Find the row and update status
         const row = element.closest('tr');
-        row.querySelector('.status').textContent = 'Approved';
-        row.querySelector('.status').className = 'status approved';
+        if (row) {
+            const statusElement = row.querySelector('.status');
+            if (statusElement) {
+                statusElement.textContent = 'Approved';
+                statusElement.className = 'status approved';
+            }
+        }
         menu.remove();
     };
     decline.onclick = function() {
         // Remove the row from the table
         const row = element.closest('tr');
-        row.parentNode.removeChild(row);
+        if (row && row.parentNode) {
+            row.parentNode.removeChild(row);
+        }
         menu.remove();
     };
 
     // Remove menu if clicked outside
     setTimeout(() => {
         document.addEventListener('click', function handler(e) {
-            if (!menu.contains(e.target) && e.target !== element) {
+            if (menu && (!menu.contains(e.target) && e.target !== element)) {
                 menu.remove();
                 document.removeEventListener('click', handler);
             }
         });
     }, 10);
 }
+
+function showStudentModal(student) {
+    const modal = document.getElementById('student-modal');
+    const body = document.getElementById('student-modal-body');
+    if (modal && body) {
+        body.innerHTML = `
+            <div class="profile-detail">
+                <div class="profile-avatar-large">${student.name.split(' ').map(n => n[0]).join('')}</div>
+                <div class="profile-name">${student.name}</div>
+                <div class="profile-email">${student.program}</div>
+                <dl class="profile-info-list">
+                    <dt>Project Title</dt><dd>${student.project}</dd>
+                    <dt>Status</dt><dd>${student.status}</dd>
+                    <dt>Category</dt><dd>${student.category}</dd>
+                </dl>
+            </div>
+        `;
+        modal.style.display = 'flex';
+    }
+}
+
+// Close student modal on close button, click outside, or Escape
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('student-modal');
+    const closeBtn = modal ? modal.querySelector('.student-modal-close') : null;
+    if (closeBtn && modal) {
+        closeBtn.onclick = function() {
+            modal.style.display = 'none';
+        };
+        // Click outside modal content
+        modal.addEventListener('mousedown', function(e) {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+        // Escape key
+        document.addEventListener('keydown', function(e) {
+            if (modal.style.display === 'flex' && (e.key === 'Escape' || e.key === 'Esc')) {
+                modal.style.display = 'none';
+            }
+        });
+    }
+});
 
 // Simulated data for demonstration (replace with real fetch in production)
 const allRows = [
@@ -86,6 +226,8 @@ let rowsShown = 3; // Show 3 rows initially
 
 function renderRows() {
     const table = document.querySelector('#requests table');
+    if (!table) return;
+    
     // Remove all rows except the header
     while (table.rows.length > 1) table.deleteRow(1);
 
@@ -112,21 +254,28 @@ function renderRows() {
 
     // Hide button if all rows are shown
     const btn = document.getElementById('showMoreBtn');
-    if (rowsShown >= allRows.length) {
-        btn.style.display = 'none';
-    } else {
-        btn.style.display = 'block';
+    if (btn) {
+        if (rowsShown >= allRows.length) {
+            btn.style.display = 'none';
+        } else {
+            btn.style.display = 'block';
+        }
     }
 }
 
 // Initial render
 document.addEventListener('DOMContentLoaded', function() {
-    renderRows();
-    const btn = document.getElementById('showMoreBtn');
-    if (btn) {
-        btn.onclick = function() {
-            rowsShown += 3; // Show 3 more rows each time
-            renderRows();
-        };
+    // Only run dashboard code if we're on the dashboard page
+    const dashboardContainer = document.querySelector('.dashboard-container');
+    
+    if (dashboardContainer) {
+        renderRows();
+        const btn = document.getElementById('showMoreBtn');
+        if (btn) {
+            btn.onclick = function() {
+                rowsShown += 3; // Show 3 more rows each time
+                renderRows();
+            };
+        }
     }
 });

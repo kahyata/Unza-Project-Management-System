@@ -1,0 +1,137 @@
+/* notifications.css */
+.notifications {
+    padding: 20px;
+    margin: 0 auto;
+}
+
+.not-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.head {
+    font-size: 24px;
+    font-weight: bold;
+    color: #2a2a68;
+}
+
+.sub-head {
+    position: relative;
+    cursor: pointer;
+}
+
+.settings-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    width: 200px;
+    z-index: 100;
+    padding: 8px 0;
+}
+
+.dropdown-item {
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.dropdown-item:hover {
+    background: #f5f5f5;
+}
+
+.filter-options {
+    margin-bottom: 20px;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    background: white;
+    cursor: pointer;
+    margin-right: 10px;
+    border-radius: 4px;
+}
+
+.filter-btn.active {
+    background: #2a2a68;
+    color: white;
+    border-color: #2a2a68;
+}
+
+.not-sub-head {
+    margin-bottom: 10px;
+}
+
+.time {
+    font-weight: bold;
+    color: #666;
+}
+
+#notifications-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.not-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 16px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    gap: 12px;
+}
+
+.not-item.unread {
+    background-color: #f0f8ff;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #2a2a68;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.not-body {
+    flex: 1;
+}
+
+.not-item-title {
+    font-weight: bold;
+    margin-bottom: 4px;
+    color: #2a2a68;
+}
+
+.not-item-subtitle {
+    color: #666;
+    font-size: 14px;
+}
+
+.not-time {
+    color: #999;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+    font-style: italic;
+}

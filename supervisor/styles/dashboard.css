@@ -1,3 +1,176 @@
+/* Profile Detail Modal Styles */
+.custom-popup-modal {
+    display: none;
+    position: fixed;
+    z-index: 3000;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.18);
+    align-items: center;
+    justify-content: center;
+}
+.custom-popup-modal.active {
+    display: flex;
+}
+.custom-popup-modal-content {
+    background: #fff;
+    border-radius: 18px;
+    padding: 40px 36px 32px 36px;
+    min-width: 340px;
+    max-width: 98vw;
+    box-shadow: 0 6px 32px rgba(0,0,0,0.13);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+    font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+}
+.custom-popup-close {
+    position: absolute;
+    top: 18px;
+    right: 22px;
+    background: #f0f0f0;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    font-size: 1.5rem;
+    color: #555;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.custom-popup-close:hover {
+    background: #e0e0e0;
+    color: #222;
+}
+
+/* Example profile content styling */
+#custom-popup-body {
+    width: 100%;
+}
+.profile-detail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 18px;
+}
+.profile-avatar-large {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: #555;
+    margin-bottom: 10px;
+}
+.profile-name {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #222;
+}
+.profile-email {
+    font-size: 1.05rem;
+    color: #555;
+    margin-bottom: 8px;
+}
+.profile-info-list {
+    width: 100%;
+    margin-top: 10px;
+}
+.profile-info-list dt {
+    font-weight: 600;
+    color: #333;
+    margin-top: 8px;
+}
+.profile-info-list dd {
+    margin: 0 0 8px 0;
+    color: #444;
+    font-size: 1rem;
+}
+.bulk-action-modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.25);
+    align-items: center;
+    justify-content: center;
+}
+.bulk-action-modal.active {
+    display: flex;
+}
+.bulk-action-modal-content {
+    background: #fff;
+    border-radius: 12px;
+    padding: 36px 32px 28px 32px;
+    min-width: 320px;
+    max-width: 95vw;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.18);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.bulk-action-modal-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 22px;
+    color: #222;
+}
+.bulk-action-modal-buttons {
+    display: flex;
+    gap: 18px;
+}
+.close-bulk-modal-btn {
+    background: #e0e0e0;
+    color: #333;
+    border: none;
+    border-radius: 5px;
+    padding: 4px 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.close-bulk-modal-btn:hover {
+    background: #bdbdbd;
+}
+.accept-all-btn, .decline-all-btn {
+    margin-left: 6px;
+    padding: 4px 12px;
+    font-size: 0.95rem;
+    border: none;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.accept-all-btn {
+    background: #28a745;
+    color: #fff;
+}
+.accept-all-btn:hover {
+    background: #218838;
+}
+.decline-all-btn {
+    background: #dc3545;
+    color: #fff;
+}
+.decline-all-btn:hover {
+    background: #b52a37;
+}
 .dash-list {
             display: flex;
             gap: 20px;
@@ -60,8 +233,7 @@
             border: #e0e0e0 1px solid;
             border-radius: 25px;
             padding: 2px;
-            justify-content: center;
-            width: 385px;
+            justify-content: left;
             display: flex;
             gap: 5px;
             margin-bottom: 22px;
@@ -76,17 +248,31 @@
             font-size: 0.85rem;
             font-weight: 550;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: background 0.2s, color 0.2s;
         }
 
-        .project-attributes button:hover {
+        .project-attributes button.active {
+            background: #007bff;
+            color: #fff;
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(0,123,255,0.08);
+        }
+
+        .project-attributes button:hover:not(.active) {
             background: #b9f8e9;
+        }
+
+        /* Hide all containers by default, show only active */
+        .dash-projects .container {
+            display: none;
+        }
+        .dash-projects .container.active {
+            display: block;
         }
 
         .container {
             background: #f8f9fa;
             border-radius: 8px;
-            padding: 5px 5px;
             margin-bottom: 18px;
             min-height: 70px;
         }
@@ -158,11 +344,8 @@
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    background: #fff;
     border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
-    margin-top: 18px;
 }
 
 .container th, .container td {

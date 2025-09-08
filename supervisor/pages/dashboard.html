@@ -54,16 +54,28 @@
     </div>
     <div class="dash-projects">
         <div class="project-attributes">
-            <button onclick="showContainer(1)">Requests</button>
+            <button class="active" onclick="showContainer(1)">Requests</button>
             <button onclick="showContainer(2)">Submissions</button>
             <button onclick="showContainer(3)">Projects</button>
+            <button onclick="showContainer(4)">Groups</button>
         </div>
-        <div id="requests" class="container">
+        <div id="requests" class="container active">
             <table>
                 <tr>
                     <th>
                         <input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)">
                     </th>
+<!-- Bulk Action Modal -->
+<div id="bulk-action-modal" class="bulk-action-modal">
+    <div class="bulk-action-modal-content">
+        <span class="bulk-action-modal-title">Bulk Actions</span>
+        <div class="bulk-action-modal-buttons">
+            <button class="accept-all-btn" onclick="acceptAllSelected()">Accept All</button>
+            <button class="decline-all-btn" onclick="declineAllSelected()">Decline All</button>
+            <button class="close-bulk-modal-btn" onclick="closeBulkActionModal()">Cancel</button>
+        </div>
+    </div>
+</div>
                     <th>Name</th>
                     <th>Program</th>
                     <th>Project Title</th>
@@ -130,14 +142,25 @@
                 <span class="no-meet-lg"></span>
             </div>
         </div>
+        <div class="teams" class="container"></div>        
     </div>
 </div>
 <!-- Student Details Modal -->
 <div id="student-modal" style="display:none;">
     <div class="student-modal-content">
-        <button class="student-modal-close" id="student-modal-close">&times;</button>
+        <button class="student-modal-close">&times;</button>
         <div id="student-modal-body">
             <!-- Your custom HTML template will be injected here -->
+        </div>
+    </div>
+</div>
+
+<!-- Generic Popup Modal -->
+<div id="custom-popup-modal" class="custom-popup-modal">
+    <div class="custom-popup-modal-content">
+        <button class="custom-popup-close" onclick="closeCustomPopup()">&times;</button>
+        <div id="custom-popup-body">
+            <!-- Dynamic popup content goes here -->
         </div>
     </div>
 </div>
