@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNZA PMS Sign Up</title>
+    <!-- Use the Inter font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Load Tailwind CSS from CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light blue-gray background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <!-- General Message Modal -->
+    <div id="message-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300">
+        <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full mx-4 transform scale-95 opacity-0 transition-transform transition-opacity duration-300">
+            <h3 id="modal-title" class="text-xl font-semibold mb-2"></h3>
+            <p id="modal-message" class="text-gray-700 mb-4"></p>
+            <div class="flex justify-end">
+                <button id="modal-ok-btn" class="px-4 py-2 bg-blue-500 text-white font-medium rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">OK</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Google Role Selection Modal -->
+    <div id="google-role-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300">
+        <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full mx-4 transform scale-95 opacity-0 transition-transform transition-opacity duration-300">
+            <h3 class="text-xl font-semibold mb-2">Select Your Role</h3>
+            <p class="text-gray-700 mb-4">You are a new user. Please select your role to complete registration.</p>
+            <div class="mt-4">
+                <label for="google-role-select" class="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                <select id="google-role-select" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="Student">Student</option>
+                    <option value="Supervisor">Supervisor</option>
+                    <option value="Admin">Admin</option>
+                </select>
+            </div>
+            <div class="flex justify-end mt-4">
+                <button id="google-role-complete-btn" class="px-4 py-2 bg-blue-500 text-white font-medium rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Complete Registration</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="w-full max-w-md bg-white p-8 sm:p-10 rounded-xl shadow-2xl transition-all duration-300">
+
+        <!-- Sign Up Container (initially hidden) -->
+        <div id="signup-container" class="hidden">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">Create Account</h1>
+                <p class="text-gray-500">Sign up to get started with UNZA PMS.</p>
+            </div>
+
+            <!-- Main Sign Up Form -->
+            <form id="signup-form" class="space-y-6">
+                <!-- Role Selection -->
+                <div>
+                    <label for="signup-role" class="block text-sm font-medium text-gray-700 mb-1">Select Role</label>
+                    <select id="signup-role" name="role" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200" required>
+                        <option value="Student" selected>Student</option>
+                        <option value="Supervisor">Supervisor</option>
+                        <option value="Admin">Admin</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                    <input type="text" id="username" name="username" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                </div>
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email address</label>
+                    <input type="email" id="email" name="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <input type="password" id="password" name="password" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                </div>
+                <div>
+                    <label for="confirm-password" class="block text-sm font-medium text-gray-700 mb-1">Confirm password</label>
+                    <input type="password" id="confirm-password" name="confirm-password" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg shadow-md hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50">
+                    Sign Up
+                </button>
+            </form>
+            <div class="text-center mt-6 text-sm text-gray-500">
+                Already have an account? <button id="showLoginBtn" class="text-blue-600 hover:underline font-medium">Login here</button>
+            </div>
+        </div>
+
+        <!-- Login Container -->
+        <div id="login-container">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">Welcome Back!</h1>
+                <p class="text-gray-500">Log in to your UNZA PMS account.</p>
+            </div>
+
+            <!-- Main Login Form -->
+            <form id="login-form" class="space-y-6">
+                <!-- Role Selection -->
+                <div>
+                    <label for="login-role" class="block text-sm font-medium text-gray-700 mb-1">Select Role</label>
+                    <select id="login-role" name="role" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200" required>
+                        <option value="Student" selected>Student</option>
+                        <option value="Supervisor">Supervisor</option>
+                        <option value="Admin">Admin</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="login-email" class="block text-sm font-medium text-gray-700 mb-1">Email address</label>
+                    <input type="email" id="login-email" name="login-email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                </div>
+                <div>
+                    <label for="login-password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <input type="password" id="login-password" name="login-password" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg shadow-md hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50">
+                    Login
+                </button>
+            </form>
+            <div class="text-center mt-6 text-sm text-gray-500">
+                Don't have an account? <button id="showSignupBtn" class="text-blue-600 hover:underline font-medium">Sign up here</button>
+            </div>
+        </div>
+
+        <!-- Divider and Social Sign In (shared between both forms) -->
+        <div class="relative flex items-center justify-center my-6">
+            <span class="absolute px-3 bg-white text-sm font-medium text-gray-500">Or continue with</span>
+            <div class="flex-grow border-t border-gray-300"></div>
+        </div>
+
+        <!-- Google Sign In Button -->
+        <button id="google-signin" class="w-full flex items-center justify-center gap-2 bg-gray-100 text-gray-700 font-semibold py-3 rounded-lg border border-gray-300 hover:bg-gray-200 transition duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50">
+            <svg class="w-5 h-5" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M43.611 20.0844H42V20H24V28H36.443C35.253 34.026 31.545 38.331 27.245 41.597V41.597V41.597C25.448 42.923 22.825 44 24 44C34.004 44 41.056 36.944 41.056 24C41.056 22.564 40.916 21.084 40.672 19.598L43.611 20.0844ZM24 4C12.954 4 4 12.954 4 24C4 35.046 12.954 44 24 44C27.994 44 31.848 42.844 35.132 40.528L32.128 37.892C29.612 39.467 26.96 40.4 24 40.4C15.932 40.4 9.6 34.068 9.6 24C9.6 15.932 15.932 9.6 24 9.6C28.432 9.6 32.32 11.452 35.244 14.54L38.164 11.832C34.28 8.448 29.356 6.4 24 6.4C14.004 6.4 6 14.404 6 24C6 33.596 14.004 42 24 42L24 44ZM44.204 22H24V26H44.204C44.17 26.702 44.135 27.42 44.1 28C44.025 29.5 43.83 31 43.5 32.5C43.14 34.1 42.6 35.6 42.06 37.1C41.4 38.8 40.59 40.4 39.69 41.9C39.465 42.275 39.225 42.65 38.97 43L37.164 41.364C38.044 40.164 38.824 38.956 39.488 37.668L44.204 22Z" fill="#EA4335"/>
+                <path d="M24 22H44.204V26H24V22Z" fill="#4285F4"/>
+                <path d="M24 22H44.204V26H24V22Z" fill="url(#paint0_linear)"/>
+                <path d="M43.611 20.0844L40.672 19.598C40.916 21.084 41.056 22.564 41.056 24C41.056 36.944 34.004 44 24 44C22.825 44 25.448 42.923 27.245 41.597V41.597V41.597C31.545 38.331 35.253 34.026 36.443 28H24V20H42V20.0844H43.611ZM24 4C14.004 4 6 12.404 6 22C6 31.596 14.004 40 24 40V42C12.954 42 4 33.046 4 22C4 10.954 12.954 2 24 2C29.356 2 34.28 4.048 38.164 7.552L35.244 10.26C32.32 7.172 28.432 5.32 24 5.32C15.932 5.32 9.6 11.652 9.6 19.6C9.6 27.548 15.932 33.88 24 33.88C26.96 33.88 29.612 32.943 32.128 31.368L35.132 34.004C31.848 36.32 27.994 37.476 24 37.476C12.954 37.476 4 28.522 4 17.476C4 6.428 12.954 2 24 2L24 4Z" fill="#EA4335"/>
+                <defs>
+                    <linearGradient id="paint0_linear" x1="24" y1="22" x2="44.204" y2="22" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#4285F4"/>
+                        <stop offset="1" stop-color="#34A853"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            Sign in with Google
+        </button>
+    </div>
+    
+    <!-- Load the Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+    
+        // Global variables for Firebase services and user data
+        let app, auth, db, analytics;
+        
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // --- Helper Functions for UI and Modals ---
+
+        // This function shows the success/error message modal.
+        function showModal(title, message) {
+            const modal = document.getElementById('message-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalMessage = document.getElementById('modal-message');
+
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.firstElementChild.classList.remove('scale-95', 'opacity-0');
+                modal.firstElementChild.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('message-modal');
+            modal.firstElementChild.classList.remove('scale-100', 'opacity-100');
+            modal.firstElementChild.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function showGoogleRoleModal() {
+            const modal = document.getElementById('google-role-modal');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.firstElementChild.classList.remove('scale-95', 'opacity-0');
+                modal.firstElementChild.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeGoogleRoleModal() {
+            const modal = document.getElementById('google-role-modal');
+            modal.firstElementChild.classList.remove('scale-100', 'opacity-100');
+            modal.firstElementChild.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function showLogin() {
+            document.getElementById('signup-container').classList.add('hidden');
+            document.getElementById('login-container').classList.remove('hidden');
+        }
+
+        function showSignup() {
+            document.getElementById('login-container').classList.add('hidden');
+            document.getElementById('signup-container').classList.remove('hidden');
+        }
+
+        function redirectToRolePage(role) {
+            switch (role) {
+                case 'Student':
+                    window.location.href = 'students/index.html';
+                    break;
+                case 'Supervisor':
+                    window.location.href = 'supervisors/index.html';
+                    break;
+                case 'Admin':
+                    window.location.href = 'admin/index.html';
+                    break;
+                default:
+                    showModal('Error', 'Invalid role. Please contact support.');
+            }
+        }
+        
+        function getAuthErrorMessage(errorCode) {
+            switch (errorCode) {
+                case 'auth/email-already-in-use':
+                    return 'This email is already registered. Please login or use a different email.';
+                case 'auth/invalid-email':
+                    return 'The email address is not valid.';
+                case 'auth/user-not-found':
+                case 'auth/wrong-password':
+                    return 'Incorrect email or password.';
+                case 'auth/too-many-requests':
+                    return 'Access to this account has been temporarily disabled due to many failed login attempts. Please try again later.';
+                case 'auth/invalid-credential':
+                    return 'The provided credentials are not valid. Please check your email and password.';
+                default:
+                    return 'An unexpected error occurred. Please try again.';
+            }
+        }
+
+        // --- Core Authentication Logic ---
+
+        async function handleEmailSignup(event) {
+            event.preventDefault();
+            const role = document.getElementById('signup-role').value;
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            if (password !== confirmPassword) {
+                showModal('Password Mismatch', 'The passwords you entered do not match. Please try again.');
+                return;
+            }
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                const userDocRef = doc(db, `artifacts/${appId}/users/${user.uid}`);
+                await setDoc(userDocRef, {
+                    email: user.email,
+                    role: role,
+                    username: username,
+                    createdAt: new Date()
+                });
+                
+                // This is the success message for a new user sign-up
+                showModal('Success!', `Sign up successful for role: ${role}. Redirecting...`);
+                setTimeout(() => redirectToRolePage(role), 1500);
+            } catch (error) {
+                console.error("Sign up error:", error);
+                const errorMessage = getAuthErrorMessage(error.code) || error.message;
+                showModal('Sign Up Failed', errorMessage);
+            }
+        }
+
+        async function handleEmailLogin(event) {
+            event.preventDefault();
+            const role = document.getElementById('login-role').value;
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                const userDocRef = doc(db, `artifacts/${appId}/users/${user.uid}`);
+                const userDocSnap = await getDoc(userDocRef);
+                
+                if (userDocSnap.exists()) {
+                    const userData = userDocSnap.data();
+                    if (userData.role === role) {
+                        // This is the success message for an email login
+                        showModal('Success!', `Login successful as ${userData.role}. Redirecting...`);
+                        setTimeout(() => redirectToRolePage(userData.role), 1500);
+                    } else {
+                        showModal('Login Failed', 'The selected role does not match the role associated with this account. Please try again or select the correct role.');
+                        auth.signOut();
+                    }
+                } else {
+                    showModal('Login Failed', 'No user data found. Please sign up first.');
+                    auth.signOut();
+                }
+            } catch (error) {
+                console.error("Login error:", error);
+                const errorMessage = getAuthErrorMessage(error.code) || error.message;
+                showModal('Login Failed', errorMessage);
+            }
+        }
+
+        async function handleGoogleSignIn() {
+            const provider = new GoogleAuthProvider();
+            try {
+                const result = await signInWithPopup(auth, provider);
+                const user = result.user;
+                
+                const userDocRef = doc(db, `artifacts/${appId}/users/${user.uid}`);
+                const userDocSnap = await getDoc(userDocRef);
+                
+                if (userDocSnap.exists()) {
+                    const userData = userDocSnap.data();
+                    // This is the success message for an existing user signing in with Google
+                    showModal('Success!', `Login successful as ${userData.role}. Redirecting...`);
+                    setTimeout(() => redirectToRolePage(userData.role), 1500);
+                } else {
+                    // New user, prompt for role
+                    showGoogleRoleModal();
+                }
+            } catch (error) {
+                console.error("Google sign in error:", error);
+                showModal('Google Sign In Failed', error.message);
+            }
+        }
+
+        async function handleGoogleRoleSelection() {
+            const selectedRole = document.getElementById('google-role-select').value;
+            const user = auth.currentUser;
+            
+            if (!user) {
+                showModal('Error', 'No authenticated user found. Please try again.');
+                return;
+            }
+
+            try {
+                const userDocRef = doc(db, `artifacts/${appId}/users/${user.uid}`);
+                await setDoc(userDocRef, {
+                    email: user.email,
+                    role: selectedRole,
+                    username: user.displayName || user.email.split('@')[0],
+                    createdAt: new Date()
+                });
+                
+                closeGoogleRoleModal();
+                // This is the success message for a new Google user completing registration
+                showModal('Success!', `Registration completed as ${selectedRole}. Redirecting...`);
+                setTimeout(() => redirectToRolePage(selectedRole), 1500);
+            } catch (error) {
+                console.error("Role selection error:", error);
+                showModal('Registration Failed', error.message);
+            }
+        }
+    
+        // --- Main Initialization and Event Listeners ---
+        async function initializeAppAndAuth() {
+            try {
+                const firebaseConfig = {
+                apiKey: "AIzaSyDgL2jkytPV6jW5mn_qG0L-ibS8OTIuaDA",
+                authDomain: "project-management-syste-51986.firebaseapp.com",
+                databaseURL: "https://project-management-syste-51986-default-rtdb.firebaseio.com",
+                projectId: "project-management-syste-51986",
+                storageBucket: "project-management-syste-51986.firebasestorage.app",
+                messagingSenderId: "622256735016",
+                appId: "1:622256735016:web:2756a02e3d5541ed65861d",
+                measurementId: "G-0STK8W9M4L"
+                };
+                
+                if (!firebaseConfig.apiKey) {
+                    console.error("Firebase config is empty or invalid. Please provide it in the code.");
+                    showModal("Configuration Error", "Firebase configuration is missing. Please add your project credentials to the code.");
+                    return;
+                }
+                
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                analytics = getAnalytics(app);
+                    
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                }
+            } catch (error) {
+                console.error("Firebase initialization failed:", error);
+                showModal("Error", "Failed to initialize Firebase. Please check your configuration and network connection.");
+            }
+        }
+    
+        // Attach all event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeAppAndAuth();
+            document.getElementById('showLoginBtn').addEventListener('click', showLogin);
+            document.getElementById('showSignupBtn').addEventListener('click', showSignup);
+            document.getElementById('modal-ok-btn').addEventListener('click', closeModal);
+            document.getElementById('signup-form').addEventListener('submit', handleEmailSignup);
+            document.getElementById('login-form').addEventListener('submit', handleEmailLogin);
+            document.getElementById('google-signin').addEventListener('click', handleGoogleSignIn);
+            document.getElementById('google-role-complete-btn').addEventListener('click', handleGoogleRoleSelection);
+        });
+    </script>
+</body>
+</html>
