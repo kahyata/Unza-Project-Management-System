@@ -1,3 +1,156 @@
-<div>
-    <h1>Teams</h1>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Management</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/teams.css">
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1>Team Management</h1>
+            <button class="create-team-btn" id="createTeamBtn">
+                <span class="material-icons">group_add</span> Create New Team
+            </button>
+        </div>
+
+        <div class="content-card">
+            <div id="teamsContainer">
+                <div class="teams-grid" id="teamsGrid">
+                    <!-- Teams will be loaded here -->
+                </div>
+                <div id="noTeamsMsg" class="no-teams">
+                    <span class="material-icons">group</span>
+                    No teams created yet. Create your first team to get started!
+                </div>
+            </div>
+        </div>
+        
+        <!-- Team Discussion Section (initially hidden) -->
+        <div class="content-card full-width" id="discussionSection" style="display: none;">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <span class="card-icon">💬</span>
+                    Team Discussion
+                </h2>
+                <div class="progress-indicator" id="comment-count">0 Comments</div>
+            </div>
+            
+            <div class="comments-container" id="comments-container">
+                <!-- Comments will be loaded here -->
+            </div>
+            
+            <div class="add-comment-form">
+                <div class="comment-input-container">
+                    <div class="user-avatar-small" id="current-user-avatar">JD</div>
+                    <div class="comment-input-wrapper">
+                        <textarea class="comment-input" id="comment-input" placeholder="Add a comment..."></textarea>
+                        <div class="comment-actions">
+                            <button class="btn comment-btn" id="submit-comment-btn">Comment</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Team Modal -->
+    <div class="modal" id="createTeamModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Create New Team</h2>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <form id="createTeamForm">
+                <div class="form-group">
+                    <label for="teamName">Team Name</label>
+                    <input type="text" id="teamName" name="teamName" required>
+                </div>
+                <div class="form-group">
+                    <label for="teamDescription">Description (Optional)</label>
+                    <textarea id="teamDescription" name="teamDescription" rows="3"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelCreate">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Team</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Team Settings Modal -->
+    <div class="modal" id="teamSettingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="settingsTeamName">Team Settings</h2>
+                <button class="close-modal" id="closeSettingsModal">&times;</button>
+            </div>
+            <div class="settings-content">
+                <h3>Team Members</h3>
+                <div class="settings-members-list" id="settingsMembersList">
+                    <!-- Members will be loaded here -->
+                </div>
+                
+                <div class="settings-actions">
+                    <button class="btn btn-danger" id="leaveTeamBtn">
+                        <span class="material-icons">exit_to_app</span> Leave Team
+                    </button>
+                    <button class="btn btn-danger" id="deleteTeamBtn" style="display: none;">
+                        <span class="material-icons">delete</span> Delete Team
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Remove Member Confirmation Modal -->
+    <div class="modal" id="removeMemberModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Remove Member</h2>
+                <button class="close-modal" id="closeRemoveModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to remove <span id="removeMemberName"></span> from the team?</p>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" id="cancelRemove">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmRemove">Remove Member</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invite Member Modal -->
+    <div class="modal" id="inviteMemberModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Invite Team Member</h2>
+                <button class="close-modal" id="closeInviteModal">&times;</button>
+            </div>
+            <form id="inviteMemberForm">
+                <div class="form-group">
+                    <label for="inviteEmail">Email Address</label>
+                    <input type="email" id="inviteEmail" name="inviteEmail" required placeholder="Enter member's email">
+                </div>
+                <div class="form-group">
+                    <label for="inviteRole">Role</label>
+                    <select id="inviteRole" name="inviteRole" required>
+                        <option value="member">Team Member</option>
+                        <option value="admin">Team Admin</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelInvite">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Send Invitation</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script src="../js/teams.js"></script>
+</body>
+</html>
