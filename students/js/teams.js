@@ -1,744 +1,652 @@
-// Team Management functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            // DOM elements
-            const createTeamBtn = document.getElementById('createTeamBtn');
-            const createTeamModal = document.getElementById('createTeamModal');
-            const teamSettingsModal = document.getElementById('teamSettingsModal');
-            const removeMemberModal = document.getElementById('removeMemberModal');
-            const inviteMemberModal = document.getElementById('inviteMemberModal');
-            const closeModalBtn = document.getElementById('closeModal');
-            const closeSettingsModalBtn = document.getElementById('closeSettingsModal');
-            const closeRemoveModalBtn = document.getElementById('closeRemoveModal');
-            const closeInviteModalBtn = document.getElementById('closeInviteModal');
-            const cancelCreateBtn = document.getElementById('cancelCreate');
-            const cancelRemoveBtn = document.getElementById('cancelRemove');
-            const cancelInviteBtn = document.getElementById('cancelInvite');
-            const createTeamForm = document.getElementById('createTeamForm');
-            const inviteMemberForm = document.getElementById('inviteMemberForm');
-            const teamsGrid = document.getElementById('teamsGrid');
-            const noTeamsMsg = document.getElementById('noTeamsMsg');
-            const leaveTeamBtn = document.getElementById('leaveTeamBtn');
-            const deleteTeamBtn = document.getElementById('deleteTeamBtn');
-            const confirmRemoveBtn = document.getElementById('confirmRemove');
-            const notification = document.getElementById('notification');
-            const discussionSection = document.getElementById('discussionSection');
-           
-            // Current user (in a real app, this would come from authentication)
-            const currentUser = {
-                id: "user1",
-                name: "John Doe",
-                initials: "JD",
-                isLeader: true // Initially set to true for demo purposes
-            };
-           
-            // Team data (initially empty)
-            let teams = [];
-            let currentTeamId = null;
-            let memberToRemove = null;
-           
-            // Load teams from localStorage
-            function loadTeamsFromStorage() {
-                const savedTeams = localStorage.getItem('project-teams');
-                if (savedTeams) {
-                    try {
-                        teams = JSON.parse(savedTeams);
-                    } catch (e) {
-                        console.error('Error parsing teams data:', e);
-                        teams = [];
-                        showNotification('Error loading teams data', true);
-                    }
-                }
-            }
-           
-            // Save teams to localStorage
-            function saveTeamsToStorage() {
-                try {
-                    localStorage.setItem('project-teams', JSON.stringify(teams));
-                } catch (e) {
-                    console.error('Error saving teams data:', e);
-                    showNotification('Error saving teams data', true);
-                }
-            }
-           
-            // Show notification
-            function showNotification(message, isError = false) {
-                const notificationText = document.getElementById('notificationText');
-                notificationText.textContent = message;
-               
-                if (isError) {
-                    notification.classList.add('error');
-                    notification.querySelector('.material-icons').textContent = 'error';
-                } else {
-                    notification.classList.remove('error');
-                    notification.querySelector('.material-icons').textContent = 'check_circle';
-                }
-               
-                notification.classList.add('show');
-               
-                setTimeout(() => {
-                    notification.classList.remove('show');
-                }, 3000);
-            }
-           
-            // Toggle discussion section visibility
-            function toggleDiscussionSection() {
-                if (teams.length > 0) {
-                    discussionSection.style.display = 'block';
-                } else {
-                    discussionSection.style.display = 'none';
-                }
-            }
-           
-            // Render teams function
-            function renderTeams() {
-                teamsGrid.innerHTML = ""; // clear old
-               
-                if (teams.length === 0) {
-                    noTeamsMsg.style.display = 'block';
-                    toggleDiscussionSection();
-                    return;
-                }
-               
-                noTeamsMsg.style.display = 'none';
-               
-                teams.forEach(team => {
-                    const teamCard = document.createElement("div");
-                    teamCard.className = "team-card";
-                    teamCard.dataset.teamId = team.id;
+ // Current user simulation (in a real app, this would come from authentication)
+        const currentUser = {
+            id: 'user-1',
+            name: 'John Doe',
+            email: 'john.doe@example.com',
+            avatar: 'JD'
+        };
 
-                    const isLeader = team.leaderId === currentUser.id;
+        // Sample initial data
+        let teams = [
+           
+        ];
 
-                    teamCard.innerHTML = `
-                        <div class="team-card-header">
-                            <div class="team-info">
-                                <div class="team-name">${team.name}</div>
-                                <div class="team-description">${team.description || "No description"}</div>
-                            </div>
-                            <span class="team-status status-active">Active</span>
-                        </div>
-                        <div class="team-members">
-                            <div class="members-title">Members (${team.members.length})</div>
-                            <ul class="member-list">
-                                ${team.members.map(member => `
-                                    <li class="member-item">
-                                        <div class="member-avatar">${member.initials}</div>
-                                        <div class="member-info">
-                                            <div class="member-name">${member.name} ${member.id === team.leaderId ? "(Leader)" : ""}</div>
-                                            <div class="member-role">${member.role || "Team Member"}</div>
-                                        </div>
-                                    </li>
-                                `).join("")}
-                            </ul>
-                        </div>
-                        <div class="team-actions">
-                            <button class="team-action-btn view-btn" data-team-id="${team.id}">
-                                <span class="material-icons">visibility</span> View
-                            </button>
-                            <button class="team-action-btn invite-btn" data-team-id="${team.id}">
-                                <span class="material-icons">person_add</span> Invite
-                            </button>
-                            <div class="team-dropdown">
-                                <button class="dropdown-toggle">
-                                    <span class="material-icons">more_vert</span>
-                                </button>
-                                <div class="dropdown-menu">
-                                    <div class="dropdown-item" data-action="settings" data-team-id="${team.id}">
-                                        <span class="material-icons">settings</span>
-                                        Team Settings
-                                    </div>
-                                    ${isLeader ? `
-                                    <div class="dropdown-item delete" data-action="delete" data-team-id="${team.id}">
-                                        <span class="material-icons">delete</span>
-                                        Delete Team
-                                    </div>` : `
-                                    <div class="dropdown-item delete" data-action="leave" data-team-id="${team.id}">
-                                        <span class="material-icons">exit_to_app</span>
-                                        Leave Team
-                                    </div>`}
+        // DOM Elements
+        const teamsGrid = document.getElementById('teamsGrid');
+        const noTeamsMsg = document.getElementById('noTeamsMsg');
+        const createTeamBtn = document.getElementById('createTeamBtn');
+        const createTeamModal = document.getElementById('createTeamModal');
+        const closeModal = document.getElementById('closeModal');
+        const cancelCreate = document.getElementById('cancelCreate');
+        const createTeamForm = document.getElementById('createTeamForm');
+        const teamSettingsModal = document.getElementById('teamSettingsModal');
+        const closeSettingsModal = document.getElementById('closeSettingsModal');
+        const settingsMembersList = document.getElementById('settingsMembersList');
+        const leaveTeamBtn = document.getElementById('leaveTeamBtn');
+        const deleteTeamBtn = document.getElementById('deleteTeamBtn');
+        const removeMemberModal = document.getElementById('removeMemberModal');
+        const closeRemoveModal = document.getElementById('closeRemoveModal');
+        const cancelRemove = document.getElementById('cancelRemove');
+        const confirmRemove = document.getElementById('confirmRemove');
+        const removeMemberName = document.getElementById('removeMemberName');
+        const inviteMemberModal = document.getElementById('inviteMemberModal');
+    const closeInviteModalBtn = document.getElementById('closeInviteModal');
+        const cancelInvite = document.getElementById('cancelInvite');
+        const inviteMemberForm = document.getElementById('inviteMemberForm');
+    const teamCollabRow = document.getElementById('teamCollabRow');
+    const githubLinkCard = document.getElementById('githubLinkCard');
+    const todoListContainer = document.getElementById('todo-list-container');
+    const addTodoForm = document.getElementById('add-todo-form');
+    const todoInput = document.getElementById('todo-input');
+    const todoDueDate = document.getElementById('todo-due-date');
+    const githubLinkForm = document.getElementById('github-link-form');
+    const githubLinkInput = document.getElementById('github-link-input');
+    const githubLinkDisplay = document.getElementById('github-link-display');
+        const commentsContainer = document.getElementById('comments-container');
+        const commentInput = document.getElementById('comment-input');
+        const submitCommentBtn = document.getElementById('submit-comment-btn');
+        const commentCount = document.getElementById('comment-count');
+        const notification = document.getElementById('notification');
+
+        // State variables
+        let currentTeamId = null;
+        let memberToRemove = null;
+        let teamToRemoveFrom = null;
+
+        // Initialize the application
+        function init() {
+            renderTeams();
+            setupEventListeners();
+        }
+
+        // Render all teams
+        function renderTeams() {
+            teamsGrid.innerHTML = '';
+            
+            if (teams.length === 0) {
+                noTeamsMsg.style.display = 'block';
+                return;
+            }
+            
+            noTeamsMsg.style.display = 'none';
+            
+            teams.forEach(team => {
+                const teamCard = createTeamCard(team);
+                teamsGrid.appendChild(teamCard);
+            });
+        }
+
+        // Create a team card element
+        function createTeamCard(team) {
+            const teamCard = document.createElement('div');
+            teamCard.className = 'team-card';
+            teamCard.dataset.teamId = team.id;
+            
+            const isAdmin = team.members.find(m => m.id === currentUser.id)?.role === 'admin';
+            const isCreator = team.createdBy === currentUser.id;
+            
+            teamCard.innerHTML = `
+                <div class="team-card-header">
+                    <div class="team-info">
+                        <h3 class="team-name">${team.name}</h3>
+                        <p class="team-description">${team.description}</p>
+                    </div>
+                    <span class="team-status status-${team.status}">${team.status}</span>
+                </div>
+                
+                <div class="team-members">
+                    <h4 class="members-title">Members (${team.members.length})</h4>
+                    <ul class="member-list">
+                        ${team.members.slice(0, 3).map(member => `
+                            <li class="member-item">
+                                <div class="member-avatar">${member.avatar}</div>
+                                <div class="member-info">
+                                    <div class="member-name">${member.name} ${member.id === currentUser.id ? '(You)' : ''}</div>
+                                    <div class="member-role">${member.role}</div>
                                 </div>
+                            </li>
+                        `).join('')}
+                        ${team.members.length > 3 ? `
+                            <li class="member-item">
+                                <div class="member-avatar">+${team.members.length - 3}</div>
+                                <div class="member-info">
+                                    <div class="member-name">and ${team.members.length - 3} more</div>
+                                </div>
+                            </li>
+                        ` : ''}
+                    </ul>
+                </div>
+                
+                <div class="team-actions">
+                    <button class="team-action-btn view-btn" data-action="view">
+                        <span class="material-icons">visibility</span> View
+                    </button>
+                    <button class="team-action-btn invite-btn" data-action="invite">
+                        <span class="material-icons">person_add</span> Invite
+                    </button>
+                    <div class="team-dropdown">
+                        <button class="dropdown-toggle">
+                            <span class="material-icons">more_vert</span>
+                        </button>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-item" data-action="settings">
+                                <span class="material-icons">settings</span> Settings
                             </div>
+                            ${isAdmin || isCreator ? `
+                                <div class="dropdown-item delete" data-action="delete">
+                                    <span class="material-icons">delete</span> Delete Team
+                                </div>
+                            ` : ''}
                         </div>
-                    `;
+                    </div>
+                </div>
+            `;
+            
+            // Add event listeners to the buttons
+            teamCard.querySelector('[data-action="view"]').addEventListener('click', () => {
+                viewTeamDiscussion(team.id);
+            });
+            
+            teamCard.querySelector('[data-action="invite"]').addEventListener('click', () => {
+                openInviteModal(team.id);
+            });
+            
+            teamCard.querySelector('[data-action="settings"]').addEventListener('click', () => {
+                openTeamSettings(team.id);
+            });
+            
+            if (isAdmin || isCreator) {
+                teamCard.querySelector('[data-action="delete"]').addEventListener('click', () => {
+                    deleteTeam(team.id);
+                });
+            }
+            
+            // Toggle dropdown menu
+            const dropdownToggle = teamCard.querySelector('.dropdown-toggle');
+            const dropdownMenu = teamCard.querySelector('.dropdown-menu');
+            
+            dropdownToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdownMenu.classList.toggle('show');
+            });
+            
+            // Close dropdown when clicking elsewhere
+            document.addEventListener('click', () => {
+                dropdownMenu.classList.remove('show');
+            });
+            
+            return teamCard;
+        }
 
-                    teamsGrid.appendChild(teamCard);
-                });
-
-                // re-bind events after rendering
-                document.querySelectorAll(".view-btn").forEach(btn => {
-                    btn.addEventListener("click", function() {
-                        const teamId = this.getAttribute("data-team-id");
-                        viewTeam(teamId);
-                    });
-                });
-
-                document.querySelectorAll(".invite-btn").forEach(btn => {
-                    btn.addEventListener("click", function() {
-                        const teamId = this.getAttribute("data-team-id");
-                        openInviteModal(teamId);
-                    });
-                });
-
-                // Add event listeners to dropdown toggles
-                document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
-                    toggle.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        const dropdown = this.nextElementSibling;
-                        const isShowing = dropdown.classList.contains('show');
-                       
-                        // Close all other dropdowns
-                        document.querySelectorAll('.dropdown-menu').forEach(menu => {
-                            menu.classList.remove('show');
-                        });
-                       
-                        // Toggle this dropdown
-                        if (!isShowing) {
-                            dropdown.classList.add('show');
-                        }
-                    });
-                });
-               
-                // Add event listeners to dropdown items
-                document.querySelectorAll('.dropdown-item').forEach(item => {
-                    item.addEventListener('click', function() {
-                        const action = this.getAttribute('data-action');
-                        const teamId = this.getAttribute('data-team-id');
-                       
-                        if (action === 'settings') {
-                            openSettingsModal(teamId);
-                        } else if (action === 'delete') {
-                            confirmDeleteTeam(teamId);
-                        } else if (action === 'leave') {
-                            confirmLeaveTeam(teamId);
-                        }
-                    });
-                });
-               
-                // Close dropdowns when clicking outside
-                document.addEventListener('click', function() {
-                    document.querySelectorAll('.dropdown-menu').forEach(menu => {
-                        menu.classList.remove('show');
-                    });
-                });
-               
-                // Toggle discussion section visibility
-                toggleDiscussionSection();
-            }
-           
-            // Load teams
-            function loadTeams() {
-                loadTeamsFromStorage();
-               
-                // Clear existing content
-                teamsGrid.innerHTML = '';
-               
-                if (teams.length === 0) {
-                    noTeamsMsg.style.display = 'block';
-                    toggleDiscussionSection();
-                    return;
-                }
-               
-                noTeamsMsg.style.display = 'none';
-                renderTeams();
-            }
-           
-            // View team details
-            function viewTeam(teamId) {
-                const team = teams.find(t => t.id === teamId);
-                if (!team) return;
-               
-                alert(`Viewing team: ${team.name}\nMembers: ${team.members.length}\nDescription: ${team.description || 'No description'}`);
-            }
-           
-            // Open invite modal
-            function openInviteModal(teamId) {
-                // Set the team ID in the form (hidden field would be better in real app)
-                inviteMemberForm.setAttribute('data-team-id', teamId);
-                inviteMemberModal.style.display = 'flex';
-            }
-           
-            // Open settings modal
-            function openSettingsModal(teamId) {
-                currentTeamId = teamId;
-                const team = teams.find(t => t.id === teamId);
-               
-                if (!team) return;
-               
-                // Update modal title
-                document.getElementById('settingsTeamName').textContent = `${team.name} Settings`;
-               
-                // Check if current user is the team leader
-                const isLeader = team.leaderId === currentUser.id;
-               
-                // Show/hide delete team button based on leadership
-                deleteTeamBtn.style.display = isLeader ? 'flex' : 'none';
-                leaveTeamBtn.style.display = isLeader ? 'none' : 'flex';
-               
-                // Update members list
-                const membersList = document.getElementById('settingsMembersList');
-                membersList.innerHTML = '';
-               
-                team.members.forEach(member => {
-                    const memberItem = document.createElement('div');
-                    memberItem.className = 'settings-member-item';
-                    memberItem.innerHTML = `
-                        <div class="settings-member-info">
-                            <div class="member-avatar">${member.initials}</div>
-                            <div>
-                                <div class="member-name">${member.name} ${member.id === team.leaderId ? '(Leader)' : ''}</div>
-                                <div class="member-role">${member.role || 'Team Member'}</div>
-                            </div>
-                        </div>
-                        <div class="settings-member-actions">
-                            ${isLeader && member.id !== team.leaderId ?
-                                `<button class="remove-member-btn" data-member-id="${member.id}">
-                                    <span class="material-icons">person_remove</span>
-                                 </button>` : ''}
-                        </div>
-                    `;
-                   
-                    membersList.appendChild(memberItem);
-                });
-               
-                // Add event listeners to remove buttons
-                document.querySelectorAll('.remove-member-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const memberId = this.getAttribute('data-member-id');
-                        openRemoveMemberModal(memberId);
-                    });
-                });
-               
-                // Show settings modal
-                teamSettingsModal.style.display = 'flex';
-            }
-           
-            // Confirm leave team
-            function confirmLeaveTeam(teamId) {
-                currentTeamId = teamId;
-                const team = teams.find(t => t.id === teamId);
-               
-                if (!team) return;
-               
-                // Check if user is the leader
-                if (team.leaderId === currentUser.id) {
-                    showNotification('Team leaders cannot leave the team. Please delete the team or transfer leadership first.', true);
-                    return;
-                }
-               
-                if (confirm(`Are you sure you want to leave the team "${team.name}"?`)) {
-                    leaveTeam();
-                }
-            }
-           
-            // Confirm delete team
-            function confirmDeleteTeam(teamId) {
-                currentTeamId = teamId;
-                const team = teams.find(t => t.id === teamId);
-               
-                if (!team) return;
-               
-                // Check if user is the leader
-                if (team.leaderId !== currentUser.id) {
-                    showNotification('Only team leaders can delete the team.', true);
-                    return;
-                }
-               
-                if (confirm(`Are you sure you want to delete the team "${team.name}"? This action cannot be undone.`)) {
-                    deleteTeam();
-                }
-            }
-           
-            // Open remove member modal
-            function openRemoveMemberModal(memberId) {
-                const team = teams.find(t => t.id === currentTeamId);
-                if (!team) return;
-               
-                const member = team.members.find(m => m.id === memberId);
-                if (!member) return;
-               
-                memberToRemove = memberId;
-                document.getElementById('removeMemberName').textContent = member.name;
-                removeMemberModal.style.display = 'flex';
-            }
-           
-            // Remove member from team
-            function removeMember() {
-                if (!currentTeamId || !memberToRemove) return;
-               
-                const teamIndex = teams.findIndex(t => t.id === currentTeamId);
-                if (teamIndex === -1) return;
-               
-                // Remove the member
-                teams[teamIndex].members = teams[teamIndex].members.filter(m => m.id !== memberToRemove);
-               
-                // Save to storage
-                saveTeamsToStorage();
-               
-                // Reload teams
-                loadTeams();
-               
-                // Close modals
-                removeMemberModal.style.display = 'none';
-                teamSettingsModal.style.display = 'none';
-               
-                // Show confirmation
-                showNotification('Member removed from team');
-               
-                // Reset
-                memberToRemove = null;
-            }
-           
-            // Leave team
-            function leaveTeam() {
-                if (!currentTeamId) return;
-               
-                const teamIndex = teams.findIndex(t => t.id === currentTeamId);
-                if (teamIndex === -1) return;
-               
-                const team = teams[teamIndex];
-               
-                // Remove current user from team
-                teams[teamIndex].members = teams[teamIndex].members.filter(m => m.id !== currentUser.id);
-               
-                // If team is empty, remove it
-                if (teams[teamIndex].members.length === 0) {
-                    teams.splice(teamIndex, 1);
-                }
-               
-                // Save to storage
-                saveTeamsToStorage();
-               
-                // Reload teams
-                loadTeams();
-               
-                // Close modals
-                teamSettingsModal.style.display = 'none';
-               
-                // Show confirmation
-                showNotification(`You have left the team "${team.name}"`);
-               
-                // Reset
-                currentTeamId = null;
-            }
-           
-            // Delete team
-            function deleteTeam() {
-                if (!currentTeamId) return;
-               
-                const teamIndex = teams.findIndex(t => t.id === currentTeamId);
-                if (teamIndex === -1) return;
-               
-                const teamName = teams[teamIndex].name;
-               
-                // Remove team
-                teams.splice(teamIndex, 1);
-               
-                // Save to storage
-                saveTeamsToStorage();
-               
-                // Reload teams
-                loadTeams();
-               
-                // Close modals
-                teamSettingsModal.style.display = 'none';
-               
-                // Show confirmation
-                showNotification(`Team "${teamName}" has been deleted`);
-               
-                // Reset
-                currentTeamId = null;
-            }
-           
-            // Create new team
-            function createNewTeam(teamName, teamDescription) {
-                // Validate input
-                if (!teamName || teamName.trim().length === 0) {
-                    showNotification('Team name is required', true);
-                    return false;
-                }
-               
-                if (teamName.length > 50) {
-                    showNotification('Team name must be less than 50 characters', true);
-                    return false;
-                }
-               
-                const newTeam = {
-                    id: 'team' + Date.now(),
-                    name: teamName,
-                    description: teamDescription,
-                    leaderId: currentUser.id,
-                    members: [
-                        {
-                            id: currentUser.id,
-                            name: currentUser.name,
-                            initials: currentUser.initials,
-                            role: 'Team Leader'
-                        }
-                    ]
-                };
-               
-                teams.push(newTeam);
-                saveTeamsToStorage();
-                loadTeams();
-               
-                showNotification(`Team "${teamName}" created successfully`);
-                return true;
-            }
-           
-            // Invite member to team
-            function inviteMemberToTeam(teamId, email, role) {
-                const teamIndex = teams.findIndex(t => t.id === teamId);
-                if (teamIndex === -1) return false;
-               
-                // Validate email
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(email)) {
-                    showNotification('Please enter a valid email address', true);
-                    return false;
-                }
-               
-                // In a real app, this would send an invitation email
-                // For this demo, we'll just show a notification
-               
-                showNotification(`Invitation sent to ${email} for ${role} role`);
-                return true;
-            }
-           
-            // Event listeners for modals
-            createTeamBtn.addEventListener('click', function() {
+        // Setup event listeners
+        function setupEventListeners() {
+            // Create team modal
+            createTeamBtn.addEventListener('click', () => {
                 createTeamModal.style.display = 'flex';
             });
-           
-            closeModalBtn.addEventListener('click', function() {
-                createTeamModal.style.display = 'none';
-            });
-           
-            closeSettingsModalBtn.addEventListener('click', function() {
-                teamSettingsModal.style.display = 'none';
-            });
-           
-            closeRemoveModalBtn.addEventListener('click', function() {
-                removeMemberModal.style.display = 'none';
-            });
-           
-            closeInviteModalBtn.addEventListener('click', function() {
-                inviteMemberModal.style.display = 'none';
-            });
-           
-            cancelCreateBtn.addEventListener('click', function() {
-                createTeamModal.style.display = 'none';
-            });
-           
-            cancelRemoveBtn.addEventListener('click', function() {
-                removeMemberModal.style.display = 'none';
-            });
-           
-            cancelInviteBtn.addEventListener('click', function() {
-                inviteMemberModal.style.display = 'none';
-            });
-           
-            createTeamForm.addEventListener('submit', function(e) {
+            
+            closeModal.addEventListener('click', closeCreateTeamModal);
+            cancelCreate.addEventListener('click', closeCreateTeamModal);
+            
+            createTeamForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-               
-                const teamName = document.getElementById('teamName').value;
-                const teamDescription = document.getElementById('teamDescription').value;
-               
-                if (createNewTeam(teamName, teamDescription)) {
-                    // Reset form and close modal
-                    createTeamForm.reset();
-                    createTeamModal.style.display = 'none';
-                }
+                createNewTeam();
             });
-           
-            inviteMemberForm.addEventListener('submit', function(e) {
+            
+            // Team settings modal
+            closeSettingsModal.addEventListener('click', closeTeamSettingsModal);
+            
+            leaveTeamBtn.addEventListener('click', () => {
+                leaveTeam(currentTeamId);
+            });
+            
+            deleteTeamBtn.addEventListener('click', () => {
+                deleteTeam(currentTeamId);
+            });
+            
+            // Remove member modal
+            closeRemoveModal.addEventListener('click', closeRemoveMemberModal);
+            cancelRemove.addEventListener('click', closeRemoveMemberModal);
+            confirmRemove.addEventListener('click', removeMember);
+            
+            // Invite member modal
+            closeInviteModalBtn.addEventListener('click', closeInviteModal);
+            cancelInvite.addEventListener('click', closeInviteModal);
+            
+            inviteMemberForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-               
-                const teamId = this.getAttribute('data-team-id');
-                const email = document.getElementById('inviteEmail').value;
-                const role = document.getElementById('inviteRole').value;
-               
-                if (inviteMemberToTeam(teamId, email, role)) {
-                    // Reset form and close modal
-                    inviteMemberForm.reset();
-                    inviteMemberModal.style.display = 'none';
-                }
+                inviteMember();
             });
-           
-            confirmRemoveBtn.addEventListener('click', function() {
-                removeMember();
+            
+            // Comments
+            commentInput.addEventListener('input', () => {
+                submitCommentBtn.disabled = commentInput.value.trim() === '';
             });
-           
-            leaveTeamBtn.addEventListener('click', function() {
-                confirmLeaveTeam(currentTeamId);
-            });
-           
-            deleteTeamBtn.addEventListener('click', function() {
-                confirmDeleteTeam(currentTeamId);
-            });
-           
+            
+            submitCommentBtn.addEventListener('click', addComment);
+            
             // Close modals when clicking outside
-            window.addEventListener('click', function(e) {
-                if (e.target === createTeamModal) {
-                    createTeamModal.style.display = 'none';
+            window.addEventListener('click', (e) => {
+                if (e.target === createTeamModal) closeCreateTeamModal();
+                if (e.target === teamSettingsModal) closeTeamSettingsModal();
+                if (e.target === removeMemberModal) closeRemoveMemberModal();
+                if (e.target === inviteMemberModal) closeInviteModal();
+            });
+        }
+
+        // Create a new team
+        function createNewTeam() {
+            const teamName = document.getElementById('teamName').value;
+            const teamDescription = document.getElementById('teamDescription').value;
+            
+            const newTeam = {
+                id: 'team-' + Date.now(),
+                name: teamName,
+                description: teamDescription,
+                status: 'active',
+                createdBy: currentUser.id,
+                members: [
+                    { 
+                        id: currentUser.id, 
+                        name: currentUser.name, 
+                        email: currentUser.email, 
+                        role: 'admin',
+                        avatar: currentUser.avatar
+                    }
+                ],
+                comments: []
+            };
+            
+            teams.push(newTeam);
+            renderTeams();
+            closeCreateTeamModal();
+            createTeamForm.reset();
+            showNotification('Team created successfully!');
+        }
+
+        // Open team settings
+        function openTeamSettings(teamId) {
+            currentTeamId = teamId;
+            const team = teams.find(t => t.id === teamId);
+            
+            if (!team) return;
+            
+            document.getElementById('settingsTeamName').textContent = `${team.name} Settings`;
+            renderTeamMembers(team);
+            
+            // Show delete button only for team creator
+            deleteTeamBtn.style.display = team.createdBy === currentUser.id ? 'block' : 'none';
+            
+            teamSettingsModal.style.display = 'flex';
+        }
+
+        // Render team members in settings
+        function renderTeamMembers(team) {
+            settingsMembersList.innerHTML = '';
+            
+            team.members.forEach(member => {
+                const memberItem = document.createElement('div');
+                memberItem.className = 'settings-member-item';
+                
+                const isCurrentUser = member.id === currentUser.id;
+                const isAdmin = member.role === 'admin';
+                const isCreator = team.createdBy === member.id;
+                const canRemove = !isCurrentUser && !isCreator && 
+                                 (team.members.find(m => m.id === currentUser.id)?.role === 'admin' || 
+                                  team.createdBy === currentUser.id);
+                
+                memberItem.innerHTML = `
+                    <div class="settings-member-info">
+                        <div class="member-avatar">${member.avatar}</div>
+                        <div>
+                            <div class="member-name">${member.name} ${isCurrentUser ? '(You)' : ''}</div>
+                            <div class="member-role">${member.role} ${isCreator ? ' (Creator)' : ''}</div>
+                        </div>
+                    </div>
+                    <div class="settings-member-actions">
+                        ${canRemove ? `
+                            <button class="remove-member-btn" data-member-id="${member.id}">
+                                <span class="material-icons">person_remove</span>
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+                
+                if (canRemove) {
+                    memberItem.querySelector('.remove-member-btn').addEventListener('click', () => {
+                        openRemoveMemberModal(member, team.id);
+                    });
                 }
-                if (e.target === teamSettingsModal) {
-                    teamSettingsModal.style.display = 'none';
-                }
-                if (e.target === removeMemberModal) {
-                    removeMemberModal.style.display = 'none';
-                }
-                if (e.target === inviteMemberModal) {
-                    inviteMemberModal.style.display = 'none';
+                
+                settingsMembersList.appendChild(memberItem);
+            });
+        }
+
+        // Open remove member modal
+        function openRemoveMemberModal(member, teamId) {
+            memberToRemove = member;
+            teamToRemoveFrom = teamId;
+            removeMemberName.textContent = member.name;
+            removeMemberModal.style.display = 'flex';
+        }
+
+        // Remove member from team
+        function removeMember() {
+            if (!memberToRemove || !teamToRemoveFrom) return;
+            
+            const teamIndex = teams.findIndex(t => t.id === teamToRemoveFrom);
+            if (teamIndex === -1) return;
+            
+            teams[teamIndex].members = teams[teamIndex].members.filter(m => m.id !== memberToRemove.id);
+            
+            renderTeams();
+            renderTeamMembers(teams[teamIndex]);
+            closeRemoveMemberModal();
+            showNotification('Member removed successfully');
+        }
+
+        // Leave team
+        function leaveTeam(teamId) {
+            const teamIndex = teams.findIndex(t => t.id === teamId);
+            if (teamIndex === -1) return;
+            
+            // Check if user is the creator
+            if (teams[teamIndex].createdBy === currentUser.id) {
+                showNotification('You cannot leave a team you created. You must delete it instead.', 'error');
+                return;
+            }
+            
+            teams[teamIndex].members = teams[teamIndex].members.filter(m => m.id !== currentUser.id);
+            
+            // If no members left, delete the team
+            if (teams[teamIndex].members.length === 0) {
+                teams.splice(teamIndex, 1);
+            }
+            
+            renderTeams();
+            closeTeamSettingsModal();
+            hideDiscussionSection();
+            showNotification('You have left the team');
+        }
+
+        // Delete team
+        function deleteTeam(teamId) {
+            const teamIndex = teams.findIndex(t => t.id === teamId);
+            if (teamIndex === -1) return;
+            
+            // Check if user is the creator
+            if (teams[teamIndex].createdBy !== currentUser.id) {
+                showNotification('Only the team creator can delete the team', 'error');
+                return;
+            }
+            
+            teams.splice(teamIndex, 1);
+            
+            renderTeams();
+            closeTeamSettingsModal();
+            hideDiscussionSection();
+            showNotification('Team deleted successfully');
+        }
+
+        // Open invite modal
+        function openInviteModal(teamId) {
+            currentTeamId = teamId;
+            inviteMemberForm.reset();
+            inviteMemberModal.style.display = 'flex';
+        }
+
+        // Invite member to team
+        function inviteMember() {
+            const email = document.getElementById('inviteEmail').value;
+            const role = document.getElementById('inviteRole').value;
+            
+            const teamIndex = teams.findIndex(t => t.id === currentTeamId);
+            if (teamIndex === -1) return;
+            
+            // Check if user is already a member
+            const isAlreadyMember = teams[teamIndex].members.some(m => m.email === email);
+            if (isAlreadyMember) {
+                showNotification('This user is already a team member', 'error');
+                return;
+            }
+            
+            // Generate a mock user (in a real app, this would be fetched from the server)
+            const name = email.split('@')[0];
+            const avatar = name.substring(0, 2).toUpperCase();
+            
+            teams[teamIndex].members.push({
+                id: 'user-' + Date.now(),
+                name: name,
+                email: email,
+                role: role,
+                avatar: avatar
+            });
+            
+            renderTeams();
+            closeInviteModal();
+            showNotification('Invitation sent successfully');
+        }
+
+        // View team discussion
+        function viewTeamDiscussion(teamId) {
+            currentTeamId = teamId;
+            const team = teams.find(t => t.id === teamId);
+            if (!team) return;
+
+            // Show the new layout, hide others
+            if (teamCollabRow) teamCollabRow.style.display = 'flex';
+            if (githubLinkCard) githubLinkCard.style.display = 'block';
+
+            // Render to-do list
+            renderTodoList(team);
+
+            // Render GitHub link
+            renderGithubLink(team);
+
+            // Render comments/discussion
+            renderComments(team.comments);
+
+            // Scroll to team collab section
+            if (teamCollabRow) teamCollabRow.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function renderTodoList(team) {
+            todoListContainer.innerHTML = '';
+            if (!team.todoList) team.todoList = [];
+            if (team.todoList.length === 0) {
+                todoListContainer.innerHTML = '<div class="no-tasks">No objectives yet.</div>';
+                return;
+            }
+            const ul = document.createElement('ul');
+            ul.className = 'todo-list';
+            team.todoList.forEach((item, idx) => {
+                const li = document.createElement('li');
+                li.className = 'todo-item' + (item.completed ? ' completed' : '');
+                li.innerHTML = `
+                    <input type="checkbox" ${item.completed ? 'checked' : ''} data-idx="${idx}" />
+                    <span class="todo-task" style="${item.completed ? 'text-decoration: line-through; color: #888;' : ''}">${item.task}</span>
+                    <span class="todo-due">${item.dueDate ? 'Due: ' + item.dueDate : ''}</span>
+                `;
+                ul.appendChild(li);
+            });
+            todoListContainer.appendChild(ul);
+
+            // Checkbox event
+            ul.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                cb.addEventListener('change', function() {
+                    const idx = this.getAttribute('data-idx');
+                    team.todoList[idx].completed = this.checked;
+                    renderTodoList(team);
+                });
+            });
+        }
+
+        if (addTodoForm) {
+            addTodoForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const team = teams.find(t => t.id === currentTeamId);
+                if (!team) return;
+                if (!team.todoList) team.todoList = [];
+                const task = todoInput.value.trim();
+                const dueDate = todoDueDate.value;
+                if (task) {
+                    team.todoList.push({ task, dueDate, completed: false });
+                    renderTodoList(team);
+                    todoInput.value = '';
+                    todoDueDate.value = '';
                 }
             });
-           
-            // Initialize the page
-            loadTeams();
-           
-            // Comments functionality
-            const commentsContainer = document.getElementById('comments-container');
-            const commentInput = document.getElementById('comment-input');
-            const submitCommentBtn = document.getElementById('submit-comment-btn');
-            const commentCount = document.getElementById('comment-count');
-           
-            let comments = [];
-            let replyingTo = null;
-           
-            // Load comments from localStorage
-            function loadComments() {
-                const savedComments = localStorage.getItem('team-comments');
-                if (savedComments) {
-                    try {
-                        comments = JSON.parse(savedComments);
-                    } catch (e) {
-                        console.error('Error parsing comments:', e);
-                        comments = [];
-                    }
-                }
-                renderComments();
+        }
+
+        function renderGithubLink(team) {
+            if (!team.githubLink) {
+                githubLinkDisplay.innerHTML = '<span style="color: #888;">No GitHub link saved yet.</span>';
+            } else {
+                githubLinkDisplay.innerHTML = `<a href="${team.githubLink}" target="_blank">${team.githubLink}</a>`;
             }
-           
-            // Save comments to localStorage
-            function saveComments() {
-                try {
-                    localStorage.setItem('team-comments', JSON.stringify(comments));
-                } catch (e) {
-                    console.error('Error saving comments:', e);
-                    showNotification('Error saving comments', true);
+            githubLinkInput.value = team.githubLink || '';
+        }
+
+        if (githubLinkForm) {
+            githubLinkForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const team = teams.find(t => t.id === currentTeamId);
+                if (!team) return;
+                const link = githubLinkInput.value.trim();
+                if (link) {
+                    team.githubLink = link;
+                    renderGithubLink(team);
                 }
+            });
+        }
+
+    // Render comments (discussion)
+        function renderComments(comments) {
+            commentsContainer.innerHTML = '';
+            
+            if (comments.length === 0) {
+                commentsContainer.innerHTML = '<div class="no-comments">No comments yet. Be the first to comment!</div>';
+                commentCount.textContent = '0 Comments';
+                return;
             }
-           
-            // Render comments
-            function renderComments() {
-                commentsContainer.innerHTML = '';
-               
-                if (comments.length === 0) {
-                    commentsContainer.innerHTML = '<div class="no-comments">No comments yet. Be the first to comment!</div>';
-                    commentCount.textContent = '0 Comments';
-                    return;
-                }
-               
-                commentCount.textContent = `${comments.length} Comment${comments.length !== 1 ? 's' : ''}`;
-               
-                comments.forEach(comment => {
-                    const commentElement = createCommentElement(comment);
-                    commentsContainer.appendChild(commentElement);
-                });
-               
-                // Scroll to bottom
-                commentsContainer.scrollTop = commentsContainer.scrollHeight;
-            }
-           
-            // Create comment element
-            function createCommentElement(comment, isReply = false) {
+            
+            commentCount.textContent = `${comments.length} Comment${comments.length !== 1 ? 's' : ''}`;
+            
+            comments.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)).forEach(comment => {
                 const commentElement = document.createElement('div');
                 commentElement.className = 'comment';
-                commentElement.dataset.commentId = comment.id;
-               
-                // Format the timestamp
-                const timestamp = new Date(comment.timestamp).toLocaleString();
-               
+                
+                const timeAgo = getTimeAgo(comment.timestamp);
+                
                 commentElement.innerHTML = `
                     <div class="comment-avatar">
-                        <div class="user-avatar-small">${comment.authorInitials}</div>
+                        <div class="user-avatar-small">${comment.author.substring(0, 2)}</div>
                     </div>
                     <div class="comment-content">
                         <div class="comment-header">
-                            <span class="comment-author">${comment.authorName}</span>
-                            <span class="comment-time">${timestamp}</span>
+                            <span class="comment-author">${comment.author}</span>
+                            <span class="comment-time">${timeAgo}</span>
                         </div>
-                        <div class="comment-text">${comment.text}</div>
+                        <div class="comment-text">${comment.content}</div>
                         <div class="comment-actions">
-                            <span class="comment-like">Like</span>
+                            <span class="comment-like">Like (${comment.likes || 0})</span>
                             <span class="comment-reply">Reply</span>
                         </div>
                     </div>
                 `;
-               
-                // Add event listeners for like and reply
-                const likeBtn = commentElement.querySelector('.comment-like');
-                const replyBtn = commentElement.querySelector('.comment-reply');
-               
-                likeBtn.addEventListener('click', function() {
-                    // Toggle like
-                    if (!comment.likes) comment.likes = [];
-                   
-                    const userIndex = comment.likes.indexOf(currentUser.id);
-                    if (userIndex === -1) {
-                        comment.likes.push(currentUser.id);
-                        likeBtn.textContent = `Liked (${comment.likes.length})`;
-                    } else {
-                        comment.likes.splice(userIndex, 1);
-                        likeBtn.textContent = `Like${comment.likes.length > 0 ? ` (${comment.likes.length})` : ''}`;
-                    }
-                   
-                    saveComments();
-                });
-               
-                replyBtn.addEventListener('click', function() {
-                    replyingTo = comment.id;
-                    commentInput.placeholder = `Replying to ${comment.authorName}...`;
-                    commentInput.focus();
-                });
-               
-                return commentElement;
-            }
-           
-            // Add new comment
-            function addComment(text) {
-                if (!text || text.trim().length === 0) return;
-               
-                const newComment = {
-                    id: 'comment' + Date.now(),
-                    text: text,
-                    authorId: currentUser.id,
-                    authorName: currentUser.name,
-                    authorInitials: currentUser.initials,
-                    timestamp: new Date().toISOString(),
-                    likes: []
-                };
-               
-                comments.push(newComment);
-                saveComments();
-                renderComments();
-               
-                // Clear input
-                commentInput.value = '';
-                replyingTo = null;
-                commentInput.placeholder = 'Add a comment...';
-            }
-           
-            // Event listeners for comments
-            submitCommentBtn.addEventListener('click', function() {
-                addComment(commentInput.value);
+                
+                commentsContainer.appendChild(commentElement);
             });
-           
-            commentInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    addComment(commentInput.value);
-                }
-            });
-           
-            // Load comments
-            loadComments();
-        });
+        }
+
+
+        // Add a new comment
+        function addComment() {
+            const content = commentInput.value.trim();
+            if (!content) return;
+            
+            const teamIndex = teams.findIndex(t => t.id === currentTeamId);
+            if (teamIndex === -1) return;
+            
+            const newComment = {
+                id: 'comment-' + Date.now(),
+                author: currentUser.name,
+                authorId: currentUser.id,
+                content: content,
+                timestamp: new Date().toISOString(),
+                likes: 0
+            };
+            
+            teams[teamIndex].comments.push(newComment);
+            renderComments(teams[teamIndex].comments);
+            
+            commentInput.value = '';
+            submitCommentBtn.disabled = true;
+            
+            showNotification('Comment added');
+        }
+
+        // Helper function to get time ago string
+        function getTimeAgo(timestamp) {
+            const now = new Date();
+            const commentDate = new Date(timestamp);
+            const diffInSeconds = Math.floor((now - commentDate) / 1000);
+            
+            if (diffInSeconds < 60) {
+                return 'just now';
+            }
+            
+            const diffInMinutes = Math.floor(diffInSeconds / 60);
+            if (diffInMinutes < 60) {
+                return `${diffInMinutes} minute${diffInMinutes !== 1 ? 's' : ''} ago`;
+            }
+            
+            const diffInHours = Math.floor(diffInMinutes / 60);
+            if (diffInHours < 24) {
+                return `${diffInHours} hour${diffInHours !== 1 ? 's' : ''} ago`;
+            }
+            
+            const diffInDays = Math.floor(diffInHours / 24);
+            if (diffInDays < 30) {
+                return `${diffInDays} day${diffInDays !== 1 ? 's' : ''} ago`;
+            }
+            
+            return commentDate.toLocaleDateString();
+        }
+
+        // Show notification
+        function showNotification(message, type = 'success') {
+            notification.textContent = message;
+            notification.className = `notification ${type === 'error' ? 'error' : ''}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Close modals
+        function closeCreateTeamModal() {
+            createTeamModal.style.display = 'none';
+        }
+        
+        function closeTeamSettingsModal() {
+            teamSettingsModal.style.display = 'none';
+        }
+        
+        function closeRemoveMemberModal() {
+            removeMemberModal.style.display = 'none';
+            memberToRemove = null;
+            teamToRemoveFrom = null;
+        }
+        
+        function closeInviteModal() {
+            inviteMemberModal.style.display = 'none';
+        }
+        
+        function hideDiscussionSection() {
+            discussionSection.style.display = 'none';
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', init);S

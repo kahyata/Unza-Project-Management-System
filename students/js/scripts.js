@@ -23,6 +23,10 @@ const mobileProfileMenu = document.getElementById('mobileProfileMenu');
 const mobileSettings = document.getElementById('mobileSettings');
 const mobileLogout = document.getElementById('mobileLogout');
 
+// Import Firestore from root/firebase.js
+import { db } from '../../root/firebase.js';
+import { collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
 // Project management state
 let projects = [];
 let currentStep = 1;
@@ -288,10 +292,9 @@ document.addEventListener('keydown', function(e) {
 });
 
 // Project management functions
-function createProject(formData) {
+async function createProject(formData) {
     console.log('Creating project with data:', formData);
     const project = {
-        id: Date.now(),
         participantType: formData.participantType,
         firstName: formData.firstName,
         middleName: formData.middleName || 'Not specified',
@@ -304,10 +307,32 @@ function createProject(formData) {
         projectBrief: formData.projectBrief,
         supervisor: formData.supervisor || 'Not specified',
         createdAt: new Date().toLocaleDateString(),
-        status: 'Active'
+        status: 'waiting'
     };
-    projects.push(project);
-    updateProjectsList();
+    try {
+        // Save to Firestore
+    // Fetch projects from Firestore and update the UI
+    async function fetchProjects() {
+        try {
+            const querySnapshot = await getDocs(collection(db, "projects"));
+            projects = [];
+            querySnapshot.forEach((doc) => {
+                projects.push({ id: doc.id, ...doc.data() });
+            });
+            updateProjectsList();
+        } catch (error) {
+            console.error('Error fetching projects from Firestore:', error);
+        }
+    }
+        const docRef = await addDoc(collection(db, "projects"), project);
+        project.id = docRef.id;
+        projects.push(project);
+        updateProjectsList();
+        console.log('Project saved to Firestore with ID:', docRef.id);
+    } catch (error) {
+        console.error('Error saving project to Firestore:', error);
+        alert('Failed to save project. Please try again.');
+    }
 }
 
 function updateProjectsList() {
@@ -615,6 +640,9 @@ document.addEventListener('click', function(e) {
         submitProject();
     }
 });
+    // Fetch projects from Firestore
+    fetchProjects();
+
 
 // Handle form submissions
 document.addEventListener('submit', function(e) {

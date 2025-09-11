@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Team Management</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/teams.css">
 </head>
 <body>
     <div class="container">
@@ -27,31 +28,58 @@
             </div>
         </div>
         
-        <!-- Team Discussion Section (initially hidden) -->
-        <div class="content-card full-width" id="discussionSection" style="display: none;">
-            <div class="card-header">
-                <h2 class="card-title">
-                    <span class="card-icon">💬</span>
-                    Team Discussion
-                </h2>
-                <div class="progress-indicator" id="comment-count">0 Comments</div>
-            </div>
-            
-            <div class="comments-container" id="comments-container">
-                <!-- Comments will be loaded here -->
-            </div>
-            
-            <div class="add-comment-form">
-                <div class="comment-input-container">
-                    <div class="user-avatar-small" id="current-user-avatar">JD</div>
-                    <div class="comment-input-wrapper">
-                        <textarea class="comment-input" id="comment-input" placeholder="Add a comment..."></textarea>
-                        <div class="comment-actions">
-                            <button class="btn comment-btn" id="submit-comment-btn">Comment</button>
+        <!-- Team Collaboration Section (Discussion & To-Do side by side, GitHub link below) -->
+        <div class="team-collab-row" id="teamCollabRow" style="display: none; gap: 24px; margin-bottom: 24px;">
+            <div class="content-card team-discussion-card" style="flex: 1; min-width: 320px;">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <span class="card-icon">💬</span>
+                        Team Discussion
+                    </h2>
+                    <div class="progress-indicator" id="comment-count">0 Comments</div>
+                </div>
+                <div class="comments-container" id="comments-container">
+                    <!-- Comments will be loaded here -->
+                </div>
+                <div class="add-comment-form">
+                    <div class="comment-input-container">
+                        <div class="user-avatar-small" id="current-user-avatar">JD</div>
+                        <div class="comment-input-wrapper">
+                            <textarea class="comment-input" id="comment-input" placeholder="Add a comment..."></textarea>
+                            <div class="comment-actions">
+                                <button class="btn comment-btn" id="submit-comment-btn">Comment</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="content-card team-todo-card" style="flex: 1; min-width: 320px;">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <span class="card-icon">📝</span>
+                        Project Milestones
+                    </h2>
+                </div>
+                <div id="todo-list-container"></div>
+                <form id="add-todo-form" style="margin-top: 12px; display: flex; gap: 8px;">
+                    <input type="text" id="todo-input" placeholder="Objective/Task" required style="flex:2;" />
+                    <input type="date" id="todo-due-date" required style="flex:1;" />
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </form>
+            </div>
+        </div>
+        <div class="content-card github-link-card" id="githubLinkCard" style="display: none; margin-bottom: 24px;">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <span class="card-icon">🔗</span>
+                    GitHub Repository
+                </h2>
+            </div>
+            <form id="github-link-form" style="display: flex; gap: 8px;">
+                <input type="url" id="github-link-input" placeholder="Paste GitHub repo link here" required style="flex:2;" />
+                <button type="submit" class="btn btn-primary">Save Link</button>
+            </form>
+            <div id="github-link-display" style="margin-top: 10px;"></div>
         </div>
     </div>
 
