@@ -1,11 +1,11 @@
- // Current user simulation (in a real app, this would come from authentication)
+console.log('teams.js loaded and running');
+// Current user simulation (in a real app, this would come from authentication)
         const currentUser = {
             id: 'user-1',
             name: 'John Doe',
             email: 'john.doe@example.com',
             avatar: 'JD'
         };
-
         // Sample initial data
         let teams = [
            
@@ -30,18 +30,18 @@
         const confirmRemove = document.getElementById('confirmRemove');
         const removeMemberName = document.getElementById('removeMemberName');
         const inviteMemberModal = document.getElementById('inviteMemberModal');
-    const closeInviteModalBtn = document.getElementById('closeInviteModal');
+        const closeInviteModalBtn = document.getElementById('closeInviteModal');
         const cancelInvite = document.getElementById('cancelInvite');
         const inviteMemberForm = document.getElementById('inviteMemberForm');
-    const teamCollabRow = document.getElementById('teamCollabRow');
-    const githubLinkCard = document.getElementById('githubLinkCard');
-    const todoListContainer = document.getElementById('todo-list-container');
-    const addTodoForm = document.getElementById('add-todo-form');
-    const todoInput = document.getElementById('todo-input');
-    const todoDueDate = document.getElementById('todo-due-date');
-    const githubLinkForm = document.getElementById('github-link-form');
-    const githubLinkInput = document.getElementById('github-link-input');
-    const githubLinkDisplay = document.getElementById('github-link-display');
+        const teamCollabRow = document.getElementById('teamCollabRow');
+        const githubLinkCard = document.getElementById('githubLinkCard');
+        const todoListContainer = document.getElementById('todo-list-container');
+        const addTodoForm = document.getElementById('add-todo-form');
+        const todoInput = document.getElementById('todo-input');
+        const todoDueDate = document.getElementById('todo-due-date');
+        const githubLinkForm = document.getElementById('github-link-form');
+        const githubLinkInput = document.getElementById('github-link-input');
+        const githubLinkDisplay = document.getElementById('github-link-display');
         const commentsContainer = document.getElementById('comments-container');
         const commentInput = document.getElementById('comment-input');
         const submitCommentBtn = document.getElementById('submit-comment-btn');
@@ -57,6 +57,14 @@
         function init() {
             renderTeams();
             setupEventListeners();
+        }
+
+        // Ensure event listeners are set up after DOM is ready
+        if (typeof window !== 'undefined') {
+            document.addEventListener('DOMContentLoaded', () => {
+                console.log('DOMContentLoaded: calling init()');
+                init();
+            });
         }
 
         // Render all teams
@@ -180,8 +188,13 @@
 
         // Setup event listeners
         function setupEventListeners() {
+            // Debug: Check if button and modal exist
+            console.log('setupEventListeners: createTeamBtn:', createTeamBtn);
+            console.log('setupEventListeners: createTeamModal:', createTeamModal);
+
             // Create team modal
             createTeamBtn.addEventListener('click', () => {
+                console.log('Create Team button clicked');
                 createTeamModal.style.display = 'flex';
             });
             
@@ -648,5 +661,54 @@
             discussionSection.style.display = 'none';
         }
 
-        // Initialize the app
-        document.addEventListener('DOMContentLoaded', init);S
+        // --- FIREBASE/FIRESTORE IMPORTS ---
+        import { db } from '../../root/firebase.js';
+        import { collection, addDoc, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- FIRESTORE HELPERS ---
+        async function fetchTeamsFromFirestore() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "teams"));
+                const loadedTeams = [];
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    data.id = docSnap.id;
+                    loadedTeams.push(data);
+                });
+                if (loadedTeams.length > 0) {
+                    teams = loadedTeams;
+                    renderTeams();
+                }
+            } catch (error) {
+                console.error('Error fetching teams:', error);
+            }
+        }
+
+        async function saveTeamToFirestore(team) {
+            try {
+                if (team.id) {
+                    await setDoc(doc(db, "teams", team.id), team);
+                } else {
+                    const docRef = await addDoc(collection(db, "teams"), team);
+                    team.id = docRef.id;
+                }
+            } catch (error) {
+                console.error('Error saving team:', error);
+            }
+        }
+
+        // --- HOOK INTO EXISTING LOGIC ---
+        // On page load, fetch teams from Firestore
+        if (typeof window !== 'undefined') {
+            document.addEventListener('DOMContentLoaded', fetchTeamsFromFirestore);
+        }
+
+        // Patch createNewTeam to also save to Firestore
+        const _originalCreateNewTeam = createNewTeam;
+        createNewTeam = async function(...args) {
+            const result = _originalCreateNewTeam.apply(this, args);
+            if (teams.length > 0) {
+                await saveTeamToFirestore(teams[teams.length - 1]);
+            }
+            return result;
+        };
